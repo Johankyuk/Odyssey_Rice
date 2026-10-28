@@ -51,3 +51,14 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 
 ## Historial
 Ver CHANGELOG.md (más reciente al final).
+
+## ASUS TUF A16 / asusctl (sesión 2026-10-28)
+- Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). Kyu no quiere cambiar de kernel: no proponerlo.
+- asusctl y rog-control-center 6.5.0 no están en xbps: compilados en ~/src/asusctl desde el tag 6.5.0 (origin https://github.com/opengamingcollective/asusctl; el repo de GitLab migró). Instalados con make install en /usr; se borraron las unidades systemd. Dependencias de build: libs -devel de udev, libinput, seat, fontconfig, xkbcommon, wayland, Mesa, freetype, libusb, expat, at-spi2-core, más pkg-config, cmake, clang y gettext (msgfmt).
+- Servicio runit: /etc/sv/asusd/run (IS_SERVICE=1, exec /usr/bin/asusd), enlazado en /var/service/asusd. Fuera del respaldo de chezmoi.
+- Actualizar: cd ~/src/asusctl, git fetch --tags, git checkout <tag>, make, sudo make install, borrar las unidades systemd instaladas, sudo sv restart asusd.
+- Funciona: perfiles de plataforma, límite de carga, monitoreo y brillo del teclado. No funciona: pestaña GPU y límites de potencia (falta el driver asus-armoury, llega con kernel 6.19) y asusctl aura (os error 13 en kbd_rgb_mode).
+- No escribir a mano en /sys/devices/platform/asus-nb-wmi/ (dgpu_disable, gpu_mux_mode, ppt_*, nv_*): los ppt_* leen 5 y no se sabe qué acepta el firmware.
+- Teclado RGB: se controla escribiendo "1 0 R G B 0" en /sys/class/leds/asus::kbd_backlight/kbd_rgb_mode (archivo de solo escritura). Color elegido: 120 20 220, persistido en el bloque kbd-purple de /etc/rc.local (fuera de chezmoi). Los pasteles (ej. 9c75d7) se ven blancos en el teclado; usar colores saturados. No probado tras suspender.
+- Tema noctalia: dot_config/noctalia/theme.toml.tmpl con source = "wallpaper" y wallpaper_scheme = "soft"; wallpaper wallhaven-2eqjdy.png versionado en Pictures/Wallpapers del repo.
+- lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.

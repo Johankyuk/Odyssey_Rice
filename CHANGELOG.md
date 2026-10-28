@@ -59,3 +59,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: El morado sale del wallpaper vía state/settings.toml; se cierra la discrepancia con Odyssey.json y el respaldo de la paleta queda como pendiente
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 04:30 — AGENTS.md: registro de asusctl, teclado, tema y fuentes
+- Por qué: Dejar el contexto de la sesión para los agentes de IA
+- Archivos:
+  - AGENTS.md
