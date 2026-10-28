@@ -80,3 +80,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - AGENTS.md.bak.1793164236
   - AGENTS.md.bak.1793164389
   - AGENTS.md.bak.1793164965
+
+## 2026-10-28 06:08 — dGPU: dgpu_disable, scripts dgpu-off/on y hallazgo NVPCF
+- Por qué: documenta el modo integrado y los pendientes para generalizarlo
+- Archivos:
+  - AGENTS.md
