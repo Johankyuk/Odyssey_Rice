@@ -1,0 +1,4 @@
+# Con el arranque por defecto el único dispositivo es nvidia_wmi_ec_backlight (firmware, EC), que es el que mueve el panel.
+[brightness.monitor.eDP-1]
+backend = "backlight"
+backlight_device = "nvidia_wmi_ec_backlight"

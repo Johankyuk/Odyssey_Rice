@@ -95,3 +95,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: la medición posterior contradice la causa NVPCF; se marca sin confirmar
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 14:40 — noctalia: brightness.toml con nvidia_wmi_ec_backlight
+- Por qué: El arranque por defecto solo expone ese dispositivo (EC) y es el que mueve el panel; amdgpu_bl1 ya no existe
+- Archivos:
+  - dot_config/noctalia/brightness.toml
