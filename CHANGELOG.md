@@ -124,3 +124,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: Una sola lista vigente de pendientes al inicio, asusctl y teclado RGB separados, marcas históricas en conclusiones de dGPU superadas, reglas con los errores de hoy y secciones de respaldo y entorno al día
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 15:31 — noctalia: instantánea de la GUI como zz-kyu-ui.toml y notas en AGENTS.md
+- Por qué: Los cambios de barras, dock, bloqueo y widgets vivían solo en el estado de la GUI, fuera del repo; el prefijo zz- busca que cargue después de odyssey.toml (orden sin verificar)
+- Archivos:
+  - AGENTS.md
+  - dot_config/noctalia/zz-kyu-ui.toml

@@ -6,9 +6,9 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
 - Foro (nobody): hallazgo del brillo en borrador, en inglés y con la voz de Kyu. El brillo persistió tras un reinicio. Falta que Kyu elija la categoría del foro y lo publique. Origen probable: firmware, kernel o driver NVIDIA, no Odyssey. No incluir cifras de vatios.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
-- Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo.
+- Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
-- Cerrado por evidencia, no por confirmación de Kyu: "actualizar el toml de noctalia en el repo". chezmoi status y chezmoi unmanaged salieron limpios y brightness.toml ya estaba subido (commit ad3717d). Si Kyu se refería a otro toml, revisar con chezmoi diff.
+- Toml de noctalia (resuelto 2026-10-28): lo que Kyu cambió vive en ~/.local/state/noctalia/settings.toml (estado de la GUI, fuera del repo por diseño). Se versionó una instantánea como dot_config/noctalia/zz-kyu-ui.toml (ver la sección "Tema de noctalia y lavat"). Antes de ese cambio chezmoi status estaba limpio y brightness.toml ya estaba subido (commit ad3717d).
 - Kernel 7 y asus-armoury: cambio de GPU mux; ahí se retoma ~/src/asusctl. Hasta entonces el kernel no cambia.
 - Backlog previo: windowrules; toml de colores de noctalia (discrepancia roja/morada); plugins de noctalia; IDE de Python (Miniconda + Spyder, el entorno spyder abre bien); plantillas de chezmoi Shipwreck vs Odyssey estable; bug de miri con la 3.ª ventana (upstream, parche abandonado).
 
@@ -27,7 +27,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 - restore.sh: restaura todo en otra máquina (instala chezmoi, genera llave SSH, clona, aplica con backup).
 
 ## Qué se respalda
-foot (foot.ini y themes/), niri (config.kdl, noctalia.kdl), noctalia (odyssey.toml, templates.toml, settings.json, palettes, colorschemes, logo), .zshrc y miri (config.toml). Desde 2026-10-28 también: ~/.local/bin/{dgpu-on,dgpu-off,gpu-mode}, noctalia/brightness.toml (dispositivo de brillo), dot_config/noctalia/theme.toml.tmpl, el wallpaper wallhaven-2eqjdy.png (Pictures/Wallpapers) y README.md (guía de reinstalación en 8 pasos). system-restore.sh está en .chezmoiignore.
+foot (foot.ini y themes/), niri (config.kdl, noctalia.kdl), noctalia (odyssey.toml, templates.toml, settings.json, palettes, colorschemes, logo), .zshrc y miri (config.toml). Desde 2026-10-28 también: ~/.local/bin/{dgpu-on,dgpu-off,gpu-mode}, noctalia/brightness.toml (dispositivo de brillo), dot_config/noctalia/theme.toml.tmpl, el wallpaper wallhaven-2eqjdy.png (Pictures/Wallpapers) y README.md (guía de reinstalación en 8 pasos). system-restore.sh está en .chezmoiignore. Desde 2026-10-28 también noctalia/zz-kyu-ui.toml (instantánea del estado de la GUI).
 
 ## Qué NO va nunca al repo
 Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium, libaccounts-glib, archivos *.bak.*, binarios (miri) y el correo o datos personales en estos documentos. Tampoco /etc/NetworkManager/system-connections/ (contraseñas Wi-Fi en texto plano): no pegarlo ni subirlo.
@@ -82,6 +82,11 @@ Ver CHANGELOG.md (más reciente al final).
 - Siguen en el sistema, inocuos sin asusd: /etc/udev/rules.d/99-asus-kbd-rgb.rules (hace legibles kbd_rgb_mode y kbd_rgb_state) y el bloque kbd-purple de /etc/rc.local, que escribe directo al LED.
 
 ## Tema de noctalia y lavat
+<!-- zz-kyu-ui-2026-10-28 -->
+- Noctalia v5 fusiona los .toml de ~/.config/noctalia/ y después el estado de la GUI (~/.local/state/noctalia/settings.toml), que gana si repite una clave.
+- zz-kyu-ui.toml es una instantánea (2026-10-28) de ese estado sin [theme] ni [wallpaper] (esos están en theme.toml): barras default y VandB, dock, pantalla de bloqueo, OSD, widgets y acciones de sesión. En esta máquina el estado sigue ganando, así que el archivo solo importa en una instalación limpia.
+- El prefijo zz- busca que cargue después de odyssey.toml. El orden alfabético NO está verificado, y 29 claves se repiten con odyssey.toml sin haber comparado sus valores. Probar en la VM.
+- Para refrescar la instantánea: copiar settings.toml sin config_version, [theme] ni [wallpaper], conservar las 3 líneas de comentario del encabezado, validar con tomllib que el resultado sea igual al original recortado y subir con rice-commit.sh. No subir la configuración efectiva completa (883 líneas de valores por defecto que cambian con cada versión de noctalia).
 - Tema noctalia: dot_config/noctalia/theme.toml.tmpl con source = "wallpaper" y wallpaper_scheme = "soft"; wallpaper wallhaven-2eqjdy.png versionado en Pictures/Wallpapers del repo.
 - lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.
 

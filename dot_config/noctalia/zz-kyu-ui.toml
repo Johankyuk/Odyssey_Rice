@@ -1,0 +1,286 @@
+# Copia de ~/.local/state/noctalia/settings.toml (2026-10-28), sin [theme] ni [wallpaper], que ya están en theme.toml.
+# Es una instantánea: el estado de la GUI sigue ganando. Para refrescarla, repetir el bloque de snapshot.
+# Nombre con prefijo zz- para cargar después de odyssey.toml (orden alfabético, sin verificar: probar en la VM).
+[audio]
+enable_overdrive = true
+
+[backdrop]
+blur_intensity = 0.0
+tint_intensity = 0.0
+
+[bar]
+order = [ "default", "VandB" ]
+
+    [bar.VandB]
+    auto_hide = true
+    capsule = true
+    capsule_padding = 48.0
+    center = [ "group:g1" ]
+    enabled = true
+    end = []
+    margin_ends = 400
+    position = "right"
+    radius = 80
+    reserve_space = false
+    scale = 1.2500000111758709
+    show_on_workspace_switch = false
+    start = []
+    thickness = 40
+    widget_spacing = 32
+
+        [[bar.VandB.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        enabled = true
+        fill = "surface_variant"
+        id = "g1"
+        members = [
+            "clipboard",
+            "spacer_7",
+            "brightness",
+            "spacer_6",
+            "volume",
+            "spacer_5",
+            "network",
+            "spacer_4",
+            "bluetooth"
+        ]
+        opacity = 1.0
+        padding = 6.0
+
+    [bar.default]
+    capsule = true
+    capsule_padding = 10.0
+    capsule_radius = 48
+    center = [ "clock" ]
+    concave_edge_corners = true
+    end = [ "battery", "session", "spacer_2" ]
+    font_weight = 300
+    margin_ends = 225
+    radius = 80
+    radius_bottom_left = 80
+    radius_bottom_right = 80
+    radius_top_left = 80
+    radius_top_right = 80
+    reserve_space = false
+    scale = 1.2500000111758709
+    show_on_workspace_switch = false
+    smart_auto_hide = true
+    start = [ "spacer_3", "notifications", "workspaces" ]
+    thickness = 50
+    widget_spacing = 10
+
+[calendar]
+enabled = true
+refresh_minutes = 5
+
+[dock]
+auto_hide = false
+concave_edge_corners = true
+radius = 80
+radius_bottom_left = 80
+radius_bottom_right = 80
+radius_top_left = 80
+radius_top_right = 80
+smart_auto_hide = true
+
+[idle]
+pre_action_fade_seconds = 0
+
+[lockscreen]
+transition = [ "zoom" ]
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [ "lockscreen-login-box@eDP-1", "lockscreen-login-box@eDP-2", "lockscreen-widget-0000000000000001" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 70.0
+    box_width = 512.0
+    cx = 960.0
+    cy = 795.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.0
+        background_radius = 32.0
+        center_password_text = true
+        input_opacity = 0.67000000000000004
+        input_radius = 32.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = false
+        show_weather = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-2"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 1018.0
+    output = "eDP-2"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-2".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 0.0
+    box_width = 0.0
+    cx = 960.0
+    cy = 600.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background_opacity = 0.0
+        background_padding = 32
+        background_radius = 32
+        center_text = true
+        clock_style = "digital"
+        format = "{:%-I:%M:%S %p}"
+
+[osd]
+position = "bottom_center"
+position_vertical = "bottom_center"
+scale = 1.2500000111758709
+
+[shell]
+corner_radius_scale = 2.0
+password_style = "random"
+screen_time_enabled = true
+show_location = false
+telemetry_enabled = true
+time_format = "{:%-I:%M:%S %p}"
+
+    [shell.panel]
+    session_placement = "floating"
+    session_position = "center"
+
+    [[shell.session.actions]]
+    action = "lock"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "1"
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "logout"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "2"
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "lock_and_suspend"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "3"
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "reboot"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "4"
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "shutdown"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "5"
+    variant = "destructive"
+
+    [[shell.session.actions]]
+    action = "command"
+    command = "notify-send 'Noctalia' 'Custom session entry'"
+    countdown_seconds = 0.0
+    enabled = true
+    label = "Hibernate"
+    variant = "default"
+
+[weather]
+refresh_minutes = 5
+
+[widget.brightness]
+show_label = false
+
+[widget.clock]
+format = "{:%-I:%M:%S %p}"
+
+[widget.media]
+art_size = 8
+hide_album_art = true
+hide_artist = true
+max_length = 800
+
+[widget.network]
+show_label = false
+
+[widget.spacer_2]
+length = 30
+type = "spacer"
+
+[widget.spacer_3]
+length = 30
+type = "spacer"
+
+[widget.spacer_4]
+length = 30
+type = "spacer"
+
+[widget.spacer_5]
+length = 30
+type = "spacer"
+
+[widget.spacer_6]
+length = 30
+type = "spacer"
+
+[widget.spacer_7]
+length = 30
+type = "spacer"
+
+[widget.volume]
+show_label = false
+
+[widget.workspaces]
+capsule = true
+capsule_radius = "auto"
+hide_when_empty = true
+show_labels = false
+show_tooltip = false
