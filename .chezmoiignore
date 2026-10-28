@@ -7,3 +7,7 @@
 .config/libaccounts-glib
 .config/miri/*.bak.*
 restore.sh
+README.md
+AGENTS.md
+CHANGELOG.md
+rice-commit.sh
