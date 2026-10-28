@@ -1,0 +1,15 @@
+# Paleta de Kyu en Shipwreck: colores desde el wallpaper (pisa el source = "custom" de odyssey.toml).
+# El estado de la GUI (~/.local/state/noctalia/settings.toml) sigue ganando sobre este archivo.
+[theme]
+source = "wallpaper"
+wallpaper_scheme = "soft"
+
+[theme.templates]
+builtin_ids = [ "foot", "kcolorscheme", "niri", "qt" ]
+community_ids = [ "zen-browser", "thunar" ]
+
+[wallpaper]
+directory = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers"
+
+[wallpaper.default]
+path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/wallhaven-2eqjdy.png"
