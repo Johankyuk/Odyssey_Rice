@@ -114,3 +114,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - .chezmoiignore
   - README.md
   - system-restore.sh
+
+## 2026-10-28 15:13 — AGENTS.md: asusctl descartado, brillo resuelto, scripts de GPU y reinstalación
+- Por qué: El archivo seguía describiendo asusctl como instalado y no tenía el brillo, los scripts de GPU versionados ni system-restore.sh y el README
+- Archivos:
+  - AGENTS.md

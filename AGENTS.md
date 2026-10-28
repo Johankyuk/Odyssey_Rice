@@ -46,20 +46,20 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - Respaldo de la paleta de noctalia: el repo no guarda ni el wallpaper wallhaven-2eqjdy.png ni el bloque `[theme]` del estado, así que restore.sh previsiblemente dejaría la paleta `custom` roja de Shipwreck. Propuesta sin aprobar: un ~/.config/noctalia/theme.toml versionado con `source = "wallpaper"`, `wallpaper_scheme = "soft"` y las plantillas, más el wallpaper en el repo; no versionar state/settings.toml porque la documentación lo trata como overrides de la app.
 - Fuente para dislexia: probar, meterla en noctalia y luego subir el toml.
 - IDE de Python: Miniconda instalado en ~/.local/share/miniconda3 (conda 26.9.4, sin conda init en .zshrc todavía). Falta: crear el entorno con Spyder, decidir si se corre `conda init` (quedaría versionado en .zshrc) o se activa manual por sesión.
-- ROG Control Center (dGPU bajo demanda): revisar compatibilidad, repo extra o compilar.
+- ROG Control Center (dGPU bajo demanda): DESCARTADO el 2026-10-28 junto con asusctl (ver la sección de asusctl). Se retoma con kernel 7 y asus-armoury.
 - Plantillas chezmoi para diferencias entre Shipwreck y Odyssey estable; probar restore.sh en la otra máquina.
 
 ## Historial
 Ver CHANGELOG.md (más reciente al final).
 
-## ASUS TUF A16 / asusctl (sesión 2026-10-28)
+## ASUS TUF A16 / asusctl (DESCARTADO, sesión 2026-10-28)
 - Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). Kyu no quiere cambiar de kernel: no proponerlo.
-- asusctl y rog-control-center 6.5.0 no están en xbps: compilados en ~/src/asusctl desde el tag 6.5.0 (origin https://github.com/opengamingcollective/asusctl; el repo de GitLab migró). Instalados con make install en /usr; se borraron las unidades systemd. Dependencias de build: libs -devel de udev, libinput, seat, fontconfig, xkbcommon, wayland, Mesa, freetype, libusb, expat, at-spi2-core, más pkg-config, cmake, clang y gettext (msgfmt).
-- Servicio runit: /etc/sv/asusd/run (IS_SERVICE=1, exec /usr/bin/asusd), enlazado en /var/service/asusd. Fuera del respaldo de chezmoi.
-- Actualizar: cd ~/src/asusctl, git fetch --tags, git checkout <tag>, make, sudo make install, borrar las unidades systemd instaladas, sudo sv restart asusd.
-- Funciona: perfiles de plataforma, límite de carga, monitoreo y brillo del teclado. No funciona: pestaña GPU y límites de potencia (falta el driver asus-armoury, llega con kernel 6.19) y asusctl aura (os error 13 en kbd_rgb_mode).
-- No escribir a mano en /sys/devices/platform/asus-nb-wmi/ (dgpu_disable, gpu_mux_mode, ppt_*, nv_*): los ppt_* leen 5 y no se sabe qué acepta el firmware.
+- asusctl y rog-control-center 6.5.0 se compilaron en ~/src/asusctl (tag 6.5.0, origin https://github.com/opengamingcollective/asusctl) y se ELIMINARON del sistema el 2026-10-28: binarios, regla udev 99-asusd.rules, .desktop, dbus asusd.conf, icono, metainfo, locales, /etc/sv/asusd con sus enlaces, /etc/asusd y /usr/share/{asusd,rog-gui,asusctl}. También se quitaron las dependencias de build (51 paquetes, 416 MB; pkg-config se quedó). Respaldo de /etc/asusd en ~/asusd-etc.bak.*.tar.gz; la fuente se conserva en ~/src/asusctl.
+- Para retomarlo con kernel 7: cd ~/src/asusctl, git fetch --tags, git checkout <tag>, reinstalar las dependencias de build (ya no están), make, sudo make install, borrar las unidades systemd instaladas y recrear /etc/sv/asusd/run (IS_SERVICE=1, exec /usr/bin/asusd) con su enlace en /var/service.
+- Motivo del descarte: con kernel 6.12 solo funcionaban perfiles de plataforma, límite de carga, monitoreo y brillo del teclado. La pestaña GPU y los límites de potencia piden el driver asus-armoury (kernel 6.19 o 7, según la fuente) y asusctl aura daba os error 13 en kbd_rgb_mode.
+- No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver secciones dGPU).
 - Teclado RGB: se controla escribiendo "1 0 R G B 0" en /sys/class/leds/asus::kbd_backlight/kbd_rgb_mode (archivo de solo escritura). Color elegido: 120 20 220, persistido en el bloque kbd-purple de /etc/rc.local (fuera de chezmoi). Los pasteles (ej. 9c75d7) se ven blancos en el teclado; usar colores saturados. No probado tras suspender.
+- Siguen en el sistema, inocuos sin asusd: /etc/udev/rules.d/99-asus-kbd-rgb.rules (hace legibles kbd_rgb_mode y kbd_rgb_state) y el bloque kbd-purple de /etc/rc.local, que escribe directo al LED.
 - Tema noctalia: dot_config/noctalia/theme.toml.tmpl con source = "wallpaper" y wallpaper_scheme = "soft"; wallpaper wallhaven-2eqjdy.png versionado en Pictures/Wallpapers del repo.
 - lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.
 
@@ -71,7 +71,7 @@ Verificado con salida real en Q-PC (ASUS, driver NVIDIA 595.112.07):
 - Causa: el driver atiende el Notify ACPI 0xC0 del dispositivo NVPCF (Dynamic Boost) cada ~22.5 s, en pares separados 0.7 s (pila: rm_acpi_nvpcf_notify > os_ref_dynamic_power > rpm_resume). Igual con cargador o batería y con perfil performance o balanced. En nv-acpi.c y osapi.c no se encontró parámetro de módulo para evitarlo.
 - Interruptor: /sys/devices/platform/asus-nb-wmi/dgpu_disable (0 = dGPU activa, 1 = apagada). gpu_mux_mode=1 (híbrido); egpu_enable no existe. Con 1 la NVIDIA desaparece de lspci y el valor persistió tras reiniciar (uptime 2 min, verificado).
 - Consumo en batería con la dGPU apagada y en reposo: 9.52 W promedio (30 s, current_now x voltage_now; BAT1 no expone power_now). No hay medición comparativa con la dGPU encendida.
-- Scripts en ~/.local/bin (no versionados): dgpu-off (desde TTY: sv stop sddm, rmmod nvidia_*, dgpu_disable=1, sv start sddm; log en ~/dgpu.log) y dgpu-on (dgpu_disable=0, rescan PCI, modprobe nvidia; ver actualización abajo).
+- Scripts en ~/.local/bin (versionados en el repo desde 2026-10-28): dgpu-off (desde TTY: sv stop sddm, rmmod nvidia_*, dgpu_disable=1, sv start sddm; log en ~/dgpu.log) y dgpu-on (dgpu_disable=0, rescan PCI, modprobe nvidia; ver actualización abajo).
 - El Xorg de SDDM abre la NVIDIA al arrancar (OutputClass de 10-nvidia-drm-outputclass.conf) y bloquea el rmmod; por eso dgpu-off detiene SDDM. zen (RDD Process) también la usa.
 
 Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrarlo en una release anual de Odyssey.
@@ -96,3 +96,23 @@ Pendientes: probar dgpu-on en caliente; evitar que el Xorg de SDDM tome la NVIDI
 - Hipótesis sin verificar: en el estado de arranque el Xorg de SDDM mantiene abierta la NVIDIA y eso impide el suspend. Falta medir tras reiniciar con dgpu_disable=0.
 - Decisión de Kyu: quedarse en hybrid (dgpu_disable=0) para jugar con la NVIDIA, por encima de la autonomía. Instalados: prime-run, steam, gamemoderun, mangohud, lutris.
 - No proponer el parche DSDT hasta repetir la medición en estado de arranque.
+
+<!-- brillo-reinstalacion-2026-10-28 -->
+## Brillo del panel (2026-10-28, noche)
+- Resuelto con el arranque por defecto, sin acpi_backlight (GRUB_CMDLINE_LINUX_DEFAULT original: quiet resume=UUID=... loglevel=4). Único dispositivo: nvidia_wmi_ec_backlight (type firmware, máx 200), que mueve el panel. Verificado tras reinicio con salida real: cmdline sin acpi_backlight, un solo dispositivo y brightness.toml apuntando a él.
+- Causa desconocida: no se sabe qué cambió entre el arranque donde no respondía y el que sí. Hipótesis sin probar: el EC solo responde bien con la dGPU presente desde el arranque (un solo dato; antes, la escritura al mismo dispositivo con la dGPU añadida en caliente no tuvo efecto visible).
+- acpi_backlight=native: aparecen amdgpu_bl1 y nvidia_0; escribir en amdgpu_bl1 cambia sysfs pero el panel no responde (por DPCD el panel se atenúa por PWM, no por AUX). acpi_backlight=vendor: no aparece ningún dispositivo y noctalia muestra "Disabled". asusd detenido no cambió el resultado. No usar acpi_backlight; los /etc/default/grub.bak.* sobran.
+- ~/.config/noctalia/brightness.toml (backlight_device = "nvidia_wmi_ec_backlight") está en el repo (commit ad3717d). Las teclas de niri (config.kdl, líneas ~400-401) usan brightnessctl --class=backlight sin -d: con un solo dispositivo funcionan, sin cambios. De las teclas Fn Kyu solo dijo "ya cambia el brillo", sin más detalle.
+- Observación sin probar (lectura del script): /etc/sv/odyssey-backlight/run restaura el brillo guardado en el primer dispositivo de /sys/class/backlight/*; con native sería amdgpu_bl1. Va en el post del foro para nobody.
+
+## Scripts de GPU y reinstalación (2026-10-28, noche)
+- dgpu-on, dgpu-off y gpu-mode (~/.local/bin) están versionados. gpu-mode escribe dgpu_disable y gpu_mux_mode vía asus-nb-wmi (integrated/hybrid/ultimate); el modo ultimate no está probado. dgpu-off cierra la sesión. Modo elegido: híbrido (dgpu_disable=0).
+- README.md (guía de 8 pasos), restore.sh (instala chezmoi, configura git, genera la llave SSH y hace chezmoi apply con backups) y system-restore.sh (agrega kbd-purple a /etc/rc.local con backup y activa power-profiles-daemon; está en .chezmoiignore).
+- Probado: chezmoi apply a una carpeta temporal y comparación con el home: 18 archivos, 0 diferencias. Cubre solo dotfiles.
+- Sin verificar: el nombre exacto del módulo NVIDIA en el Control Center de Odyssey (solo se vio el CLI odyssey-nvidia); que las apps ai.storyteller.* salgan de Flathub; el flujo completo en instalación limpia (SSH, paquetes, system-restore.sh, build de miri y lavat).
+- Odyssey gestiona por su cuenta: odyssey-secure-dns, los odyssey-nvidia-* de /etc/modprobe.d, /etc/odyssey/nvidia-state.json y los paquetes odyssey-*. Para Steam usar odyssey-prime %command% (prime-run viene en el paquete nvidia).
+- Rust viene de rustup (~/.cargo/bin); miri y lavat se compilan desde fuente. Flatpaks: Sober, mcpelauncher, ytmdesktop, Bazaar, Scribe, ai.storyteller.{artcraft-launcher,deckcraft,wordcraft}.
+- odyssey-backlight y odyssey-gaming-profile aparecen down con normally up: es normal (restauran estado al arrancar y se apagan solos).
+- xbps-pkgdb -a reporta hash mismatch en KDE, base-files, runit-void, kitty y odyssey-*. Hipótesis sin comparar con una salida anterior: personalizaciones de Odyssey. Ninguno es de un paquete quitado.
+- No subir /etc/NetworkManager/system-connections/ (contraseñas Wi-Fi en texto plano).
+- Pendientes: probar la reinstalación en una VM o con un usuario nuevo; arreglo del Xorg de SDDM (enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o greeter Wayland; AutoAddGPU=false no bastó); limpiar los .bak (brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia no están en .chezmoiignore).
