@@ -10,3 +10,5 @@ for p in /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 PS1='%F{magenta}>%f %F{blue}%~%f '
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+alias rice='~/.local/share/chezmoi/rice-commit.sh'

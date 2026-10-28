@@ -14,3 +14,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - CHANGELOG.md
   - README.md
   - rice-commit.sh
+
+## 2026-10-27 22:52 — Agrega alias rice en .zshrc
+- Por qué: Atajo para registrar commits con bitácora sin escribir la ruta completa
+- Archivos:
+  - dot_zshrc
