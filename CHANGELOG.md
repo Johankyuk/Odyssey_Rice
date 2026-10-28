@@ -70,3 +70,13 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - dot_config/foot/foot.ini
   - dot_config/noctalia/odyssey.toml
+
+## 2026-10-28 04:34 — Ignora AGENTS.md.bak.* en chezmoi
+- Por qué: Los respaldos de AGENTS.md se desplegaban a ~; se mueven fuera del repo
+- Archivos:
+  - .chezmoiignore
+  - AGENTS.md.bak.1793163984
+  - AGENTS.md.bak.1793164133
+  - AGENTS.md.bak.1793164236
+  - AGENTS.md.bak.1793164389
+  - AGENTS.md.bak.1793164965
