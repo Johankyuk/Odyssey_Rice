@@ -119,3 +119,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: El archivo seguía describiendo asusctl como instalado y no tenía el brillo, los scripts de GPU versionados ni system-restore.sh y el README
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 15:22 — AGENTS.md: pendientes actuales al inicio, reglas de trabajo y estructura limpia
+- Por qué: Una sola lista vigente de pendientes al inicio, asusctl y teclado RGB separados, marcas históricas en conclusiones de dGPU superadas, reglas con los errores de hoy y secciones de respaldo y entorno al día
+- Archivos:
+  - AGENTS.md
