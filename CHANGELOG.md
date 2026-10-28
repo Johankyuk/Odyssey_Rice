@@ -54,3 +54,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - AGENTS.md.bak.1793164965
+
+## 2026-10-28 01:24 — Documenta la paleta de noctalia en AGENTS.md
+- Por qué: El morado sale del wallpaper vía state/settings.toml; se cierra la discrepancia con Odyssey.json y el respaldo de la paleta queda como pendiente
+- Archivos:
+  - AGENTS.md

@@ -35,13 +35,15 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - miri: solo config.toml versionado; el binario instalado es stock, compilado desde ~/src/miri sin parches (el parche probado para el bug de la 3ra ventana se descartó, ver Discrepancias conocidas).
 - cava y cmatrix instalados con xbps. lavat no está en xbps; instalado manualmente desde https://github.com/AngelJumbo/lavat (clonado en ~/src/lavat, `make install PREFIX=$HOME/.local`) en ~/.local/bin, sin sudo.
 - keybinds: Mod+T se queda para `toggle-window-floating`, se eliminó el duplicado Mod+V. `miri-toggle` (script en ~/.local/bin) quedó sin conectar a ningún bind — Mod+M ya alterna master/scroll vía `miri action cycle-focused-workspace-mode` y aplica `focus-column-first` en cada toggle, no solo al entrar a master.
+- noctalia (paleta, resuelto 2026-10-28): el morado sale del wallpaper (~/Pictures/Wallpapers/wallhaven-2eqjdy.png), no de Odyssey.json. Lo decide ~/.local/state/noctalia/settings.toml (fuera del repo): `[theme] source = "wallpaper"`, `wallpaper_scheme = "soft"`, plantillas builtin foot, kcolorscheme, niri y qt, y community zen-browser y thunar. Shipwreck trae por defecto `source = "custom"` con la paleta Odyssey (rojo y negro) en ~/.config/noctalia/odyssey.toml.
 
 ## Discrepancias conocidas
-- colorschemes/Odyssey/Odyssey.json es rojo (#e8192c sobre #0a0a0a) pero la UI real es morada (#9c75d7 en niri/noctalia.kdl). No se sabe qué genera el tema de foot (templates.toml solo habilita la plantilla de niri).
+- Paleta de noctalia (resuelta 2026-10-28): colorschemes/Odyssey/Odyssey.json y settings.json de ~/.config/noctalia son formato v4 heredado, y palettes/Odyssey.json es la paleta `custom` de Shipwreck (rojo #e8192c); ninguno decide los colores actuales. Noctalia v5 fusiona los .toml de ~/.config/noctalia/ y luego carga ~/.local/state/noctalia/settings.toml, que gana si repite un ajuste. Las plantillas activas (foot, niri, qt, kcolorscheme) reescriben foot/themes/noctalia y niri/noctalia.kdl cuando cambia la paleta o se ejecuta `noctalia msg templates-apply`. No cambiar `source` ni aplicar plantillas sin asumir que esos dos archivos del repo se regeneran.
 - Bug abierto de miri: en modo master, al abrir la 3ra ventana la vista se corre; focus-column-first manual lo corrige. Se probó un parche en src/layout/master.rs (hilo con sleep de 250ms + FocusColumnFirst/FocusWindow) pero no resolvió el bug y es frágil (condición de carrera); se abandonó, no se guardó como .diff.
 
 ## Pendientes
-- Windowrules; toml de noctalia con la plantilla de colores; plugins necesarios de noctalia.
+- Windowrules; plugins necesarios de noctalia.
+- Respaldo de la paleta de noctalia: el repo no guarda ni el wallpaper wallhaven-2eqjdy.png ni el bloque `[theme]` del estado, así que restore.sh previsiblemente dejaría la paleta `custom` roja de Shipwreck. Propuesta sin aprobar: un ~/.config/noctalia/theme.toml versionado con `source = "wallpaper"`, `wallpaper_scheme = "soft"` y las plantillas, más el wallpaper en el repo; no versionar state/settings.toml porque la documentación lo trata como overrides de la app.
 - Fuente para dislexia: probar, meterla en noctalia y luego subir el toml.
 - IDE de Python: Miniconda instalado en ~/.local/share/miniconda3 (conda 26.9.4, sin conda init en .zshrc todavía). Falta: crear el entorno con Spyder, decidir si se corre `conda init` (quedaría versionado en .zshrc) o se activa manual por sesión.
 - ROG Control Center (dGPU bajo demanda): revisar compatibilidad, repo extra o compilar.
