@@ -27,13 +27,14 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - Diagnóstico antes de parchar: no asumir rutas ni contenido; pedir un comando de una sola línea y esperar la salida.
 - No afirmar que algo funciona sin salida real que lo confirme.
 - Decisiones: tomar la más limpia y declararla en una línea; preguntar solo en trade-offs reales; lo crítico va al final, marcado "Crítico:".
-- Cada cambio al repo se registra con `./rice-commit.sh "resumen" "por qué / contexto"`, que añade la entrada a CHANGELOG.md, hace el commit y el push.
+- Cada cambio al repo se registra con el alias de zsh `rice "resumen" "por qué / contexto"` (= `./rice-commit.sh ...`): hace `chezmoi re-add`, añade la entrada a CHANGELOG.md, hace el commit y el push. Un archivo nuevo necesita `chezmoi add` antes de que `rice` lo detecte.
 - Al cerrar un tema, actualizar las secciones "Estado actual" y "Pendientes" de este archivo.
 
 ## Estado actual
 - foot: prompt de zsh ">" (en .zshrc), alpha=0.9, cursor parpadeante y background=231736 fijados en foot.ini (después del include del tema, que genera noctalia).
 - miri: solo config.toml versionado; el binario instalado está parcheado desde ~/src/miri (src/layout/master.rs) y ese parche NO está en el repo.
-- cava y cmatrix instalados con xbps. lavat no está en xbps.
+- cava y cmatrix instalados con xbps. lavat no está en xbps; aún no se identifica la URL de su repo ni se corrió el diagnóstico de herramientas de compilación (git, gcc/cc, make).
+- keybinds: Mod+T se queda para `toggle-window-floating`, se eliminó el duplicado Mod+V. `miri-toggle` (script en ~/.local/bin) quedó sin conectar a ningún bind — Mod+M ya alterna master/scroll vía `miri action cycle-focused-workspace-mode` y aplica `focus-column-first` en cada toggle, no solo al entrar a master.
 
 ## Discrepancias conocidas
 - colorschemes/Odyssey/Odyssey.json es rojo (#e8192c sobre #0a0a0a) pero la UI real es morada (#9c75d7 en niri/noctalia.kdl). No se sabe qué genera el tema de foot (templates.toml solo habilita la plantilla de niri).
@@ -41,7 +42,6 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 
 ## Pendientes
 - Compilar lavat desde GitHub en ~/.local/bin.
-- Keybinds: conectar miri-toggle a Mod+M o descartarlo; resolver duplicado Mod+T / Mod+V.
 - Windowrules; toml de noctalia con la plantilla de colores; plugins necesarios de noctalia.
 - Fuente para dislexia: probar, meterla en noctalia y luego subir el toml.
 - Instalación de software; IDE local de Python (idea: Anaconda, sin Jupyter).

@@ -24,3 +24,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: Mod+T y Mod+V hacían lo mismo, se dejó solo Mod+T
 - Archivos:
   - dot_config/niri/config.kdl
+
+## 2026-10-27 23:06 — actualizar AGENTS.md: alias rice, estado de lavat, keybinds resueltos
+- Por qué: cerrar pendiente #2 tras el fix de Mod+V/Mod+T
+- Archivos:
+  - AGENTS.md
+  - AGENTS.md.bak.1793163984
