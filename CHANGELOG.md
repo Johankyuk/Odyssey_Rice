@@ -107,3 +107,10 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - dot_local/bin/executable_dgpu-off
   - dot_local/bin/executable_dgpu-on
   - dot_local/bin/executable_gpu-mode
+
+## 2026-10-28 14:57 — README: guia de reinstalacion y system-restore.sh
+- Por qué: Reinstalacion en pasos copiar y pegar sin rog-control-center; system-restore.sh cubre rc.local (kbd-purple) y power-profiles-daemon; sin probar de punta a punta
+- Archivos:
+  - .chezmoiignore
+  - README.md
+  - system-restore.sh
