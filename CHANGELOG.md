@@ -130,3 +130,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - dot_config/noctalia/zz-kyu-ui.toml
+
+## 2026-10-28 15:35 — AGENTS.md: borrador del post del foro, reinicio de confirmación y objetivo de fondo
+- Por qué: El borrador del post vivía solo en la conversación; también faltaban la verificación tras el reinicio, el objetivo de fondo de Kyu y la nota de que el modelo FA607NUG no está verificado
+- Archivos:
+  - AGENTS.md

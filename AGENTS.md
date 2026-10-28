@@ -4,7 +4,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 
 <!-- pendientes-actuales-2026-10-28 -->
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
-- Foro (nobody): hallazgo del brillo en borrador, en inglés y con la voz de Kyu. El brillo persistió tras un reinicio. Falta que Kyu elija la categoría del foro y lo publique. Origen probable: firmware, kernel o driver NVIDIA, no Odyssey. No incluir cifras de vatios.
+- Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en la sección "Post del foro para nobody: borrador". El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
 - Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
@@ -14,6 +14,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 
 ## Entorno
 - Distro: Odyssey Shipwreck, copia personal de "nobody" que llega cada ~40 días para cazar bugs y probar betas; su config puede divergir de Odyssey estable.
+- Objetivo de fondo de Kyu: que lo que investiga sirva a nobody para una release anual de Odyssey; por eso los hallazgos se redactan para el foro y se separa el origen (Odyssey, upstream o config propia). Prioridad actual: jugar con la NVIDIA antes que ahorrar batería (modo híbrido).
 - Base Void: gestor xbps, runit (sin systemd: no usar systemctl).
 - Sesión: niri + noctalia (shell Quickshell) + foot + zsh. Laptop con dGPU.
 - Máquina Q-PC, usuario kyu. Hardware en la sección "Equipo ASUS TUF A16"; kernel 6.12.113_1 y driver NVIDIA 595.112.07. Arranque con GRUB, login con SDDM, niri como paquete niri-odyssey (niri-odyssey-26.04_10) y noctalia v5 configurada en TOML.
@@ -69,7 +70,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 Ver CHANGELOG.md (más reciente al final).
 
 ## Equipo ASUS TUF A16 (sesión 2026-10-28)
-- Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales).
+- Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). El modelo exacto FA607NUG viene de la skill del foro y de la memoria; no se verificó con salida real (comando: cat /sys/class/dmi/id/product_name).
 - No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver secciones dGPU).
 
 ### asusctl y rog-control-center: DESCARTADO (2026-10-28)
@@ -131,6 +132,8 @@ Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrar
 - acpi_backlight=native: aparecen amdgpu_bl1 y nvidia_0; escribir en amdgpu_bl1 cambia sysfs pero el panel no responde (por DPCD el panel se atenúa por PWM, no por AUX). acpi_backlight=vendor: no aparece ningún dispositivo y noctalia muestra "Disabled". asusd detenido no cambió el resultado. No usar acpi_backlight; los /etc/default/grub.bak.* sobran.
 - ~/.config/noctalia/brightness.toml (backlight_device = "nvidia_wmi_ec_backlight") está en el repo (commit ad3717d). Las teclas de niri (config.kdl, líneas ~400-401) usan brightnessctl --class=backlight sin -d: con un solo dispositivo funcionan, sin cambios. De las teclas Fn Kyu solo dijo "ya cambia el brillo", sin más detalle.
 - Observación sin probar (lectura del script): /etc/sv/odyssey-backlight/run restaura el brillo guardado en el primer dispositivo de /sys/class/backlight/*; con native sería amdgpu_bl1. Va en el post del foro para nobody.
+- Reinicio de confirmación (2026-10-28, noche), con salida real: cmdline sin acpi_backlight (BOOT_IMAGE=/vmlinuz-6.12.113_1, nouveau.config=NvGspRm=1 apparmor=1 security=apparmor quiet resume=UUID=... loglevel=4); un solo dispositivo, nvidia_wmi_ec_backlight type=firmware brightness=200/200; brightness.toml con backlight_device = "nvidia_wmi_ec_backlight"; dgpu_disable=0; nvidia-smi 595.112.07. Kyu respondió "si jaló" sin decir qué probó (slider o teclas Fn): para más rigor, pedirle una observación concreta ("cambió de forma clara" o "no hizo nada").
+- El volcado de la configuración efectiva de noctalia (lo subió Kyu) muestra [brightness.monitor.eDP-1] con backend = "backlight" y backlight_device = "nvidia_wmi_ec_backlight": noctalia usa ese dispositivo. Ese volcado no se versiona.
 
 ## Scripts de GPU y reinstalación (2026-10-28, noche)
 - dgpu-on, dgpu-off y gpu-mode (~/.local/bin) están versionados. gpu-mode escribe dgpu_disable y gpu_mux_mode vía asus-nb-wmi (integrated/hybrid/ultimate); el modo ultimate no está probado. dgpu-off cierra la sesión. Modo elegido: híbrido (dgpu_disable=0).
@@ -143,3 +146,38 @@ Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrar
 - xbps-pkgdb -a reporta hash mismatch en KDE, base-files, runit-void, kitty y odyssey-*. Hipótesis sin comparar con una salida anterior: personalizaciones de Odyssey. Ninguno es de un paquete quitado.
 - No subir /etc/NetworkManager/system-connections/ (contraseñas Wi-Fi en texto plano).
 - Pendientes: probar la reinstalación en una VM o con un usuario nuevo; arreglo del Xorg de SDDM (enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o greeter Wayland; AutoAddGPU=false no bastó); limpiar los .bak (brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia no están en .chezmoiignore).
+
+<!-- registro-sesion-2026-10-28 -->
+## Post del foro para nobody: borrador (2026-10-28, noche)
+- Tipo: hallazgo (observación), no bug de Odyssey. Origen probable: firmware, kernel o driver NVIDIA. Va en inglés, en la voz de Kyu: prosa con encabezados en negrita, sin viñetas, humor autocrítico y firma "- Q (Kyu)". Si el agente tiene la skill odyssey-forum-voice, leerla y pasar humanizer; no corregir la gramática no-nativa de Kyu.
+- Falta: la categoría del foro (Kyu no la ha dicho) y que Kyu confirme lo marcado abajo. No incluir cifras de vatios (9.52 W y 7.54 W no son comparables y pertenecen al reporte aparte del Xorg de SDDM).
+- Por confirmar antes de publicar: el modelo FA607NUG (sin verificar con salida); la frase sobre amdgpu.backlight=1 viene de un borrador anterior y el handoff no dice que se probara; "It survived a reboot" descansa en un solo reinicio y en el "si jaló" de Kyu; gpu_mux_mode=1 como híbrido viene de la sección dGPU (verificado en esa sesión).
+- Errores ya corregidos en el borrador, no repetir: las líneas de dmesg (amdgpu omite su registro; nvidia-modeset dice que ACPI no reportó backlight nativo) son del arranque con acpi_backlight=vendor, no del arranque por defecto; no se afirma que las teclas Fn funcionen (Kyu solo dijo "ya cambia el brillo"); no se afirma que el EC dependa de la dGPU al arrancar (es hipótesis con un solo dato).
+- Texto para publicar (la cita es solo formato de este archivo):
+
+> **Panel brightness on the TUF A16 only moves through nvidia_wmi_ec_backlight**
+>
+> Hello Argonauts, sharing something I spent most of a day on, in case it helps anyone with a hybrid laptop. @nobody maybe it's useful for the next release too.
+>
+> **What happened**
+> For a while the brightness of the internal panel didn't change at all, not with the slider in noctalia and not with the keys. The sysfs values moved, the screen stayed the same. Now it works, but I honestly don't know what fixed it, so I'm posting this as an observation and not as a solved bug.
+>
+> **My setup**
+> ASUS TUF Gaming A16 FA607NUG with a Radeon 740M and an RTX 4050 Max-Q, Odyssey shipwreck, kernel 6.12.113_1, NVIDIA 595.112.07, niri 26.04 and noctalia. Hybrid mode (dgpu_disable=0, gpu_mux_mode=1). The panel is a CSOT MNG007QX2-1, 1920x1200 at 144 Hz (eDP-1).
+>
+> **What I tried**
+> On the default boot there's only one device in /sys/class/backlight, nvidia_wmi_ec_backlight (type firmware, max 200), and it moves the panel. The slider and the OSD in noctalia work with brightness.toml pointing to it.
+>
+> With acpi_backlight=native two devices show up, amdgpu_bl1 and nvidia_0. Writing to amdgpu_bl1 changes the sysfs values but the panel doesn't react. I also read the panel's DPCD: it dims through PWM, not through AUX, so the amdgpu.backlight=1 idea was a dead end. I even stopped asusd to be sure it wasn't in the way (I had asusctl installed back then, LOL) and nothing changed.
+>
+> With acpi_backlight=vendor there's no backlight device at all and noctalia shows "Disabled". In dmesg amdgpu skips its own backlight registration, and nvidia-modeset says ACPI didn't report a native backlight.
+>
+> Earlier that day I had also written to nvidia_wmi_ec_backlight after turning the dGPU off and back on at runtime. The write was accepted and nothing happened on screen.
+>
+> **What I think it is**
+> My guess, not proven: the EC only drives the panel properly when the NVIDIA GPU is there from boot, not when I bring it back later. That's one data point, so don't quote me. I can't tell what changed between the dead boot and the working one. Not sure if it's the firmware, the kernel or the NVIDIA driver, but I don't think it's Odyssey.
+>
+> One more thing for @nobody: /etc/sv/odyssey-backlight/run restores the saved brightness into the first device it finds in /sys/class/backlight. On the default boot there's only one so it's fine, but with acpi_backlight=native the first would be amdgpu_bl1, the one that doesn't move the panel. This is only from reading the script, I haven't tested it.
+>
+> It survived a reboot, and I want to check it again with the dGPU off. The best is yet to come.
+> - Q (Kyu)
