@@ -5,3 +5,4 @@
 .config/zen
 .config/VSCodium
 .config/libaccounts-glib
+.config/miri/*.bak.*

@@ -1,0 +1,6 @@
+[global]
+default_workspace_mode = "master"
+
+[master]
+column_width_percentage = 50.0
+maximize_single_window = true
