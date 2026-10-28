@@ -71,8 +71,19 @@ Verificado con salida real en Q-PC (ASUS, driver NVIDIA 595.112.07):
 - Causa: el driver atiende el Notify ACPI 0xC0 del dispositivo NVPCF (Dynamic Boost) cada ~22.5 s, en pares separados 0.7 s (pila: rm_acpi_nvpcf_notify > os_ref_dynamic_power > rpm_resume). Igual con cargador o batería y con perfil performance o balanced. En nv-acpi.c y osapi.c no se encontró parámetro de módulo para evitarlo.
 - Interruptor: /sys/devices/platform/asus-nb-wmi/dgpu_disable (0 = dGPU activa, 1 = apagada). gpu_mux_mode=1 (híbrido); egpu_enable no existe. Con 1 la NVIDIA desaparece de lspci y el valor persistió tras reiniciar (uptime 2 min, verificado).
 - Consumo en batería con la dGPU apagada y en reposo: 9.52 W promedio (30 s, current_now x voltage_now; BAT1 no expone power_now). No hay medición comparativa con la dGPU encendida.
-- Scripts en ~/.local/bin (no versionados): dgpu-off (desde TTY: sv stop sddm, rmmod nvidia_*, dgpu_disable=1, sv start sddm; log en ~/dgpu.log) y dgpu-on (dgpu_disable=0, rescan PCI, modprobe nvidia; SIN PROBAR).
+- Scripts en ~/.local/bin (no versionados): dgpu-off (desde TTY: sv stop sddm, rmmod nvidia_*, dgpu_disable=1, sv start sddm; log en ~/dgpu.log) y dgpu-on (dgpu_disable=0, rescan PCI, modprobe nvidia; ver actualización abajo).
 - El Xorg de SDDM abre la NVIDIA al arrancar (OutputClass de 10-nvidia-drm-outputclass.conf) y bloquea el rmmod; por eso dgpu-off detiene SDDM. zen (RDD Process) también la usa.
 
 Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrarlo en una release anual de Odyssey.
 Pendientes: probar dgpu-on en caliente; evitar que el Xorg de SDDM tome la NVIDIA (o greeter Wayland) para alternar sin cerrar sesión; medir consumo comparativo; reporte para nobody con los datos de NVPCF; generalizar (hoy solo ASUS vía asus-nb-wmi).
+
+<!-- dgpu-update-2026-10-28 -->
+### dGPU: actualización, flujo completo verificado (2026-10-28 06:14)
+
+- dgpu-on en caliente funciona: la NVIDIA (RTX 4050 Max-Q, 01:00.0 y 01:00.1) vuelve al bus, el driver carga, nvidia-smi -L la ve y su runtime queda en suspended. Offload GL (glxinfo renderer NVIDIA) y Vulkan (lista NVIDIA y Radeon 740M RADV) funcionan.
+- Al reaparecer, la numeración DRM se invierte: la NVIDIA pasa a card1/renderD129 y la iGPU a card0/renderD128. Usar /dev/dri/by-path y no cardN fijos.
+- El apagado en caliente no es posible: elogind-daemon mantiene abiertos los nodos DRM de la NVIDIA y bloquea el rmmod de nvidia_drm (no se sabe por qué los abre). niri no es el cliente.
+- dgpu-off v2: desde niri se relanza como root con setsid, detiene SDDM, descarga nvidia_*, pone dgpu_disable=1 y reinicia SDDM (trap EXIT garantiza el reinicio). Probado: el proceso desacoplado sobrevivió al cierre de sesión; resultado dgpu_disable=1, NVIDIA en PCI 0, sddm reiniciado.
+- Diseño resultante: encender en caliente; apagar requiere cerrar sesión (un solo comando, vuelve al login).
+- Medido: 9.52 W promedio en batería con la dGPU apagada (reposo, 30 s). Sin medición comparativa con la dGPU encendida.
+- Pendientes: medir consumo con la dGPU encendida; generalizar (hoy solo ASUS vía asus-nb-wmi; otros fabricantes usan otros mecanismos); reporte para nobody con los datos de NVPCF y el flujo.

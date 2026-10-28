@@ -85,3 +85,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: documenta el modo integrado y los pendientes para generalizarlo
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 06:15 — dGPU: encendido en caliente y dgpu-off desde niri verificados
+- Por qué: registra las pruebas reales del flujo completo y el diseño resultante
+- Archivos:
+  - AGENTS.md
