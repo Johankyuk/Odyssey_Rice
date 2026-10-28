@@ -4,7 +4,7 @@
 
 [shell]
 corner_radius_scale = 0.0
-font_family = "JetBrains Mono"
+font_family = "OpenDyslexic"
 popup_shadows = false
 popup_borders = true
 input_borders = true

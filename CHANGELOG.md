@@ -64,3 +64,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: Dejar el contexto de la sesión para los agentes de IA
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 04:34 — Fuente OpenDyslexic en foot y noctalia
+- Por qué: Accesibilidad para dislexia; noctalia necesita reinicio del proceso para tomarla
+- Archivos:
+  - dot_config/foot/foot.ini
+  - dot_config/noctalia/odyssey.toml
