@@ -87,3 +87,12 @@ Pendientes: probar dgpu-on en caliente; evitar que el Xorg de SDDM tome la NVIDI
 - Diseño resultante: encender en caliente; apagar requiere cerrar sesión (un solo comando, vuelve al login).
 - Medido: 9.52 W promedio en batería con la dGPU apagada (reposo, 30 s). Sin medición comparativa con la dGPU encendida.
 - Pendientes: medir consumo con la dGPU encendida; generalizar (hoy solo ASUS vía asus-nb-wmi; otros fabricantes usan otros mecanismos); reporte para nobody con los datos de NVPCF y el flujo.
+
+<!-- dgpu-correccion-2026-10-28 -->
+### dGPU: corrección a las conclusiones anteriores (2026-10-28 13:50)
+
+- La conclusión "la dGPU casi nunca suspende; la causa es NVPCF" quedó SIN CONFIRMAR. Estado de arranque (Xorg de SDDM con la NVIDIA abierta): 57 422 ms activa de 60 000. Medición posterior, con la dGPU añadida en caliente y sin clientes (SDDM reiniciado sin NVIDIA): 0 ms activa de 30 000, runtime suspended, 7.54 W en batería.
+- Los 7.54 W (dGPU encendida) y los 9.52 W (apagada) no son comparables: las condiciones de brillo y apps no se controlaron.
+- Hipótesis sin verificar: en el estado de arranque el Xorg de SDDM mantiene abierta la NVIDIA y eso impide el suspend. Falta medir tras reiniciar con dgpu_disable=0.
+- Decisión de Kyu: quedarse en hybrid (dgpu_disable=0) para jugar con la NVIDIA, por encima de la autonomía. Instalados: prime-run, steam, gamemoderun, mangohud, lutris.
+- No proponer el parche DSDT hasta repetir la medición en estado de arranque.

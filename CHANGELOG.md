@@ -90,3 +90,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: registra las pruebas reales del flujo completo y el diseño resultante
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 13:51 — dGPU: corrección de conclusiones y decisión de quedarse en hybrid
+- Por qué: la medición posterior contradice la causa NVPCF; se marca sin confirmar
+- Archivos:
+  - AGENTS.md
