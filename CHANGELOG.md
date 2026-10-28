@@ -30,3 +30,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - AGENTS.md.bak.1793163984
+
+## 2026-10-27 23:08 — lavat instalado y AGENTS.md actualizado
+- Por qué: lavat compilado desde AngelJumbo/lavat e instalado sin sudo en ~/.local/bin, pendiente de lavat cerrado
+- Archivos:
+  - AGENTS.md
+  - AGENTS.md.bak.1793164133
