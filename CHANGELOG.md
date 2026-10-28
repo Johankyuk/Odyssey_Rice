@@ -48,3 +48,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - AGENTS.md.bak.1793164389
+
+## 2026-10-27 23:22 — Miniconda instalado, pendiente conda init y entorno Spyder
+- Por qué: IDE de Python: se eligió Miniconda + Spyder sin Jupyter; conda ya funcional, falta inicializar shell y crear el entorno
+- Archivos:
+  - AGENTS.md
+  - AGENTS.md.bak.1793164965

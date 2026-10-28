@@ -43,7 +43,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 ## Pendientes
 - Windowrules; toml de noctalia con la plantilla de colores; plugins necesarios de noctalia.
 - Fuente para dislexia: probar, meterla en noctalia y luego subir el toml.
-- Instalación de software; IDE local de Python (idea: Anaconda, sin Jupyter).
+- IDE de Python: Miniconda instalado en ~/.local/share/miniconda3 (conda 26.9.4, sin conda init en .zshrc todavía). Falta: crear el entorno con Spyder, decidir si se corre `conda init` (quedaría versionado en .zshrc) o se activa manual por sesión.
 - ROG Control Center (dGPU bajo demanda): revisar compatibilidad, repo extra o compilar.
 - Plantillas chezmoi para diferencias entre Shipwreck y Odyssey estable; probar restore.sh en la otra máquina.
 
