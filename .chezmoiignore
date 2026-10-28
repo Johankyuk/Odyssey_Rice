@@ -1,0 +1,7 @@
+.config/niri/*.bak.*
+.config/gh
+.config/rclone
+.config/vesktop
+.config/zen
+.config/VSCodium
+.config/libaccounts-glib

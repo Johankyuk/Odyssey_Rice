@@ -1,0 +1,114 @@
+# Odyssey Linux - configurazione Noctalia v5
+# Ricostruisco qui la configurazione v4 (settings.json) in formato v5.
+# Nero pieno, accenti rossi, spigoli vivi, JetBrains Mono.
+
+[shell]
+corner_radius_scale = 0.0
+font_family = "JetBrains Mono"
+popup_shadows = false
+popup_borders = true
+input_borders = true
+
+[theme]
+source = "custom"
+custom_palette = "Odyssey"
+mode = "dark"
+
+[bar]
+order = [ "default" ]
+
+    [bar.default]
+    enabled = true
+    position = "top"
+    thickness = 34
+    layer = "top"
+    reserve_space = true
+    background_opacity = 1.0
+    border = "outline"
+    border_width = 0.0
+    shadow = false
+    contact_shadow = false
+    concave_edge_corners = false
+    radius = 0
+    radius_top_left = 0
+    radius_top_right = 0
+    radius_bottom_left = 0
+    radius_bottom_right = 0
+    margin_edge = 0
+    margin_ends = 0
+    margin_opposite_edge = 0
+    padding = 2
+    widget_spacing = 6
+    capsule = false
+    capsule_radius = 0
+    font_weight = 500
+    auto_hide = false
+    start = [ "launcher", "taskbar", "clock", "cpu", "temp", "ram", "media" ]
+    center = [ "workspaces" ]
+    end = [ "tray", "notifications", "battery", "volume", "brightness", "control-center" ]
+
+[widget.launcher]
+type = "launcher"
+custom_image = "/usr/share/odyssey/odyssey-logo.png"
+
+[widget.clock]
+type = "clock"
+format = "{:%H:%M %a %d %b}"
+
+[widget.cpu]
+type = "sysmon"
+stat = "cpu_usage"
+
+[widget.temp]
+type = "sysmon"
+stat = "cpu_temp"
+
+[widget.ram]
+type = "sysmon"
+stat = "ram_used"
+
+[dock]
+enabled = true
+position = "bottom"
+auto_hide = true
+layer = "top"
+reserve_space = false
+background_opacity = 1.0
+border = "outline"
+border_width = 0.0
+shadow = false
+concave_edge_corners = false
+radius = 0
+radius_top_left = 0
+radius_top_right = 0
+radius_bottom_left = 0
+radius_bottom_right = 0
+icon_size = 48
+item_spacing = 6
+magnification = false
+show_dots = true
+show_running = true
+show_instance_count = true
+launcher_position = "none"
+pinned = [ "zen-browser", "terminal", "Thunar", "xbps-gui", "odyssey-controlcenter", "guinit" ]
+
+[wallpaper]
+enabled = true
+fill_mode = "crop"
+directory = "/usr/share/wallpapers/odyssey"
+
+[wallpaper.default]
+path = "/usr/share/wallpapers/odyssey/odyssey-wallpaper.png"
+
+[widget.workspaces]
+capsule_radius = 0
+show_labels = true
+label_source = "id"
+focused_color = "primary"
+occupied_color = "secondary"
+empty_color = "surface_variant"
+
+[widget.media]
+min_length = 0
+max_length = 180
+title_scroll = "on_hover"
