@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Apaga la dGPU NVIDIA (dgpu_disable=1). Desde un TTY actúa directo; desde niri cierra la sesión
+# (detiene SDDM), apaga la dGPU y vuelve a levantar SDDM. Registro: ~/dgpu.log del usuario.
+U="${SUDO_USER:-$USER}"
+LOG="$(getent passwd "$U" | cut -d: -f6)/dgpu.log"
+if [ "$(id -u)" -ne 0 ] && [ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]; then
+  echo "Se cerrará tu sesión en ~5 s y volverás al login. Resultado en $LOG"
+  sudo -v || exit 1
+  sudo setsid -f "$(readlink -f "$0")" </dev/null >/dev/null 2>&1
+  exit 0
+fi
+touch "$LOG"; chown "$U" "$LOG" 2>/dev/null
+exec > >(tee -a "$LOG") 2>&1
+echo "=== dgpu-off $(date '+%F %T') (uid $(id -u)) ==="
+[ "$(id -u)" -eq 0 ] && sleep 5
+A=/sys/devices/platform/asus-nb-wmi/dgpu_disable
+[ -e "$A" ] || { echo "ABORTA: no existe $A"; exit 1; }
+echo "dgpu_disable previo: $(cat "$A")"
+trap 'sudo sv start sddm; echo "sddm reiniciado"' EXIT
+sudo sv stop sddm
+sleep 3
+H=$(sudo find /proc -maxdepth 3 -path '/proc/[0-9]*/fd/*' -lname '/dev/nvidia*' -printf '%p\n' 2>/dev/null | cut -d/ -f3 | sort -u | while read -r p; do echo "$p:$(cat /proc/$p/comm 2>/dev/null)"; done)
+[ -z "$H" ] || { echo "ABORTA: siguen usando la NVIDIA: $H"; exit 1; }
+for m in nvidia_drm nvidia_modeset nvidia_uvm nvidia; do
+  lsmod | grep -q "^$m " && { sudo rmmod "$m" || { echo "ABORTA: no se pudo descargar $m"; exit 1; }; }
+done
+echo 1 | sudo tee "$A" >/dev/null
+sleep 2
+echo "dgpu_disable ahora: $(cat "$A") | dispositivos NVIDIA en PCI: $(lspci | grep -ci nvidia)"
+echo "fin. Revertir con: dgpu-on"

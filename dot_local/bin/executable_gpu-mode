@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Equivalente a GPU Configuration de ROG Control Center, vía asus-nb-wmi (sin asus-armoury)
+P=/sys/devices/platform/asus-nb-wmi
+D=$P/dgpu_disable; M=$P/gpu_mux_mode
+rd() { [ -r "$1" ] && cat "$1" || echo "n/d"; }
+status() {
+  d=$(rd $D); m=$(rd $M)
+  case "$d/$m" in 1/1) mode=integrated;; 0/1) mode=hybrid;; 0/0) mode=ultimate;; *) mode=desconocido;; esac
+  echo "dgpu_disable=$d gpu_mux_mode=$m -> modo: $mode"
+  for p in /sys/bus/pci/devices/*; do
+    case "$(cat $p/class 2>/dev/null)" in 0x03*) ;; *) continue;; esac
+    drv=$(basename "$(readlink $p/driver 2>/dev/null)" 2>/dev/null)
+    echo "$(basename $p) vendor=$(cat $p/vendor) device=$(cat $p/device) driver=${drv:-ninguno} runtime=$(rd $p/power/runtime_status) control=$(rd $p/power/control)"
+  done
+}
+w() { echo "$2" | sudo tee "$1" >/dev/null || { echo "FALLO escribiendo $2 en $1"; exit 1; }; }
+set_mode() {
+  [ -e $D ] || { echo "sin dgpu_disable en este kernel"; exit 1; }
+  case "$1" in integrated|hybrid|ultimate) ;; *) echo "uso: gpu-mode [integrated|hybrid|ultimate]"; exit 1;; esac
+  read -rp "Cambiar a $1 (requiere reinicio). Continuar? [s/N] " a; [ "$a" = s ] || exit 0
+  case "$1" in
+    integrated) [ -e $M ] && w $M 1; w $D 1;;
+    hybrid) w $D 0; [ -e $M ] && w $M 1;;
+    ultimate) [ -e $M ] || { echo "este equipo no tiene MUX"; exit 1; }; w $D 0; w $M 0;;
+  esac
+  echo "escrito; estado leído:"; status | head -1; echo "Reinicia para aplicar."
+}
+if [ $# -eq 0 ]; then status; else set_mode "$1"; fi

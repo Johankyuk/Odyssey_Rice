@@ -100,3 +100,10 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: El arranque por defecto solo expone ese dispositivo (EC) y es el que mueve el panel; amdgpu_bl1 ya no existe
 - Archivos:
   - dot_config/noctalia/brightness.toml
+
+## 2026-10-28 14:51 — scripts: dgpu-on, dgpu-off y gpu-mode
+- Por qué: Respaldo de los scripts de control de la dGPU para que la reinstalación los traiga
+- Archivos:
+  - dot_local/bin/executable_dgpu-off
+  - dot_local/bin/executable_dgpu-on
+  - dot_local/bin/executable_gpu-mode

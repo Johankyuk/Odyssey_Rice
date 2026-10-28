@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Revierte dgpu-off: dgpu_disable=0, reescanea PCI y carga nvidia. Registro en ~/dgpu.log
+LOG="$HOME/dgpu.log"
+exec > >(tee -a "$LOG") 2>&1
+echo "=== dgpu-on $(date '+%F %T') ==="
+A=/sys/devices/platform/asus-nb-wmi/dgpu_disable
+[ -e "$A" ] || { echo "ABORTA: no existe $A"; exit 1; }
+echo "dgpu_disable previo: $(cat "$A")"
+echo 0 | sudo tee "$A" >/dev/null
+sleep 1
+echo 1 | sudo tee /sys/bus/pci/rescan >/dev/null
+sleep 2
+sudo modprobe nvidia
+echo "dgpu_disable ahora: $(cat "$A") | dispositivos NVIDIA en PCI: $(lspci | grep -ci nvidia) | nvidia cargado: $(lsmod | grep -c '^nvidia ')"
+echo "Si no aparece la GPU, reinicia."
