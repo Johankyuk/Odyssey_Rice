@@ -36,3 +36,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - AGENTS.md.bak.1793164133
+
+## 2026-10-27 23:11 — documentar abandono del parche de miri en AGENTS.md
+- Por qué: parche de focus-column-first vía hilo+sleep no resolvió el bug y es una condición de carrera; se descarta, no se guarda como .diff
+- Archivos:
+  - AGENTS.md
+  - AGENTS.md.bak.1793164236

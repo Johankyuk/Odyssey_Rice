@@ -38,7 +38,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 
 ## Discrepancias conocidas
 - colorschemes/Odyssey/Odyssey.json es rojo (#e8192c sobre #0a0a0a) pero la UI real es morada (#9c75d7 en niri/noctalia.kdl). No se sabe qué genera el tema de foot (templates.toml solo habilita la plantilla de niri).
-- Bug abierto de miri: en modo master, al abrir la 3ra ventana la vista se corre; focus-column-first manual lo corrige.
+- Bug abierto de miri: en modo master, al abrir la 3ra ventana la vista se corre; focus-column-first manual lo corrige. Se probó un parche en src/layout/master.rs (hilo con sleep de 250ms + FocusColumnFirst/FocusWindow) pero no resolvió el bug y es frágil (condición de carrera); se abandonó, no se guardó como .diff.
 
 ## Pendientes
 - Windowrules; toml de noctalia con la plantilla de colores; plugins necesarios de noctalia.
@@ -46,7 +46,6 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - Instalación de software; IDE local de Python (idea: Anaconda, sin Jupyter).
 - ROG Control Center (dGPU bajo demanda): revisar compatibilidad, repo extra o compilar.
 - Plantillas chezmoi para diferencias entre Shipwreck y Odyssey estable; probar restore.sh en la otra máquina.
-- Decidir si el parche de miri se guarda como .diff o se abandona.
 
 ## Historial
 Ver CHANGELOG.md (más reciente al final).
