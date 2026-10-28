@@ -42,3 +42,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - AGENTS.md.bak.1793164236
+
+## 2026-10-27 23:13 — miri recompilado sin el parche descartado
+- Por qué: binario vuelto a stock tras confirmar que el parche de la vista no resolvía el bug
+- Archivos:
+  - AGENTS.md
+  - AGENTS.md.bak.1793164389
