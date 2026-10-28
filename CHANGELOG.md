@@ -19,3 +19,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: Atajo para registrar commits con bitácora sin escribir la ruta completa
 - Archivos:
   - dot_zshrc
+
+## 2026-10-27 23:04 — quitar Mod+V duplicado de toggle-window-floating
+- Por qué: Mod+T y Mod+V hacían lo mismo, se dejó solo Mod+T
+- Archivos:
+  - dot_config/niri/config.kdl
