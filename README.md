@@ -70,4 +70,4 @@ Instalarla con el Control Center de Odyssey (modulo NVIDIA, driver propietario c
 - dGPU: gpu-mode muestra y cambia el modo; dgpu-on y dgpu-off la activan o apagan. El estado de dgpu_disable persiste en el firmware. Para jugar con la NVIDIA, en Steam: odyssey-prime %command%
 - ROG Control Center y asusctl: descartados con el kernel 6.12 (falta asus-armoury, que pide kernel 7). Fuente usada: tag 6.5.0 de opengamingcollective/asusctl.
 - No esta en el respaldo: partidas y datos de juegos, ~/.var/app, ~/.steam, ~/src, conexiones Wi-Fi, llave SSH.
-- Sober usa la NVIDIA mediante un override de Flatpak de sistema (lo aplica system-restore.sh). mcpelauncher se deja en la Radeon porque se traba con la NVIDIA.
+- Sober usa la NVIDIA mediante un override de Flatpak de sistema (lo aplica system-restore.sh). mcpelauncher se deja en la Radeon porque se traba con la NVIDIA por X11 (Wayland nativo sin probar de forma limpia).

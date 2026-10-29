@@ -142,3 +142,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - AGENTS.md
   - README.md
   - system-restore.sh
+
+## 2026-10-28 20:44 — AGENTS.md: panel Run on NVIDIA, vkcube en Wayland y estado de Flatpak
+- Por qué: Registra lo verificado del panel (caja de comando sobre odyssey-prime), supertuxkart por el panel, vkcube Wayland vs X11, Bazaar con flags de X11 y las pruebas pendientes; corrige la nota de mcpelauncher en el README
+- Archivos:
+  - AGENTS.md
+  - README.md
