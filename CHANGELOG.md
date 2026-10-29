@@ -148,3 +148,13 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - README.md
+
+## 2026-10-28 21:03 — AGENTS.md: detalle por tema movido a docs/
+- Por qué: AGENTS.md pesaba ~33 KB y es lo primero que lee cada agente; dgpu, brillo, flatpak-nvidia y el borrador del foro pasan a docs/ sin cambios de contenido
+- Archivos:
+  - .chezmoiignore
+  - AGENTS.md
+  - docs/brillo.md
+  - docs/dgpu.md
+  - docs/flatpak-nvidia.md
+  - docs/foro-post-brillo.md

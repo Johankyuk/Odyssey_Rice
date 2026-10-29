@@ -4,9 +4,9 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 
 <!-- pendientes-actuales-2026-10-28 -->
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
-- Panel NVIDIA y Flatpak (2026-10-28 noche): sin publicar nada hasta agotar las pruebas (decisión de Kyu). Faltan: modeset=1 con odyssey-nvidia --displays-on (reinicio e initramfs; no hacerlo sin avisar), si supertuxkart corre en Wayland o X11 (xlsclients no está instalado) y qué GPU usa Bazaar. Detalle en la sección 'Panel Run on NVIDIA'.
-- Flatpak y NVIDIA (2026-10-28): Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon (ver la sección 'Flatpak y la NVIDIA'). Falta comprobar en la VM que system-restore.sh aplique el override de Sober.
-- Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en la sección "Post del foro para nobody: borrador". El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
+- Panel NVIDIA y Flatpak (2026-10-28 noche): sin publicar nada hasta agotar las pruebas (decisión de Kyu). Faltan: modeset=1 con odyssey-nvidia --displays-on (reinicio e initramfs; no hacerlo sin avisar), si supertuxkart corre en Wayland o X11 (xlsclients no está instalado) y qué GPU usa Bazaar. Detalle en docs/flatpak-nvidia.md.
+- Flatpak y NVIDIA (2026-10-28): Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon (ver docs/flatpak-nvidia.md). Falta comprobar en la VM que system-restore.sh aplique el override de Sober.
+- Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en docs/foro-post-brillo.md. El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
 - Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
@@ -73,7 +73,7 @@ Ver CHANGELOG.md (más reciente al final).
 
 ## Equipo ASUS TUF A16 (sesión 2026-10-28)
 - Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). El modelo exacto FA607NUG viene de la skill del foro y de la memoria; no se verificó con salida real (comando: cat /sys/class/dmi/id/product_name).
-- No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver secciones dGPU).
+- No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver docs/dgpu.md).
 
 ### asusctl y rog-control-center: DESCARTADO (2026-10-28)
 - asusctl y rog-control-center 6.5.0 se compilaron en ~/src/asusctl (tag 6.5.0, origin https://github.com/opengamingcollective/asusctl) y se ELIMINARON del sistema el 2026-10-28: binarios, regla udev 99-asusd.rules, .desktop, dbus asusd.conf, icono, metainfo, locales, /etc/sv/asusd con sus enlaces, /etc/asusd y /usr/share/{asusd,rog-gui,asusctl}. También se quitaron las dependencias de build (51 paquetes, 416 MB; pkg-config se quedó). Respaldo de /etc/asusd en ~/asusd-etc.bak.*.tar.gz; la fuente se conserva en ~/src/asusctl.
@@ -93,112 +93,8 @@ Ver CHANGELOG.md (más reciente al final).
 - Tema noctalia: dot_config/noctalia/theme.toml.tmpl con source = "wallpaper" y wallpaper_scheme = "soft"; wallpaper wallhaven-2eqjdy.png versionado en Pictures/Wallpapers del repo.
 - lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.
 
-<!-- dgpu-modo-2026-10-28 -->
-## dGPU: apagado con dgpu_disable (2026-10-28)
-
-Verificado con salida real en Q-PC (ASUS, driver NVIDIA 595.112.07):
-- En modo híbrido la dGPU casi nunca suspende: 57 422 ms activa de 60 000 (95.7 %, una sola medición). SIN CONFIRMAR: ver la corrección al final de la sección dGPU.
-- Causa: el driver atiende el Notify ACPI 0xC0 del dispositivo NVPCF (Dynamic Boost) cada ~22.5 s, en pares separados 0.7 s (pila: rm_acpi_nvpcf_notify > os_ref_dynamic_power > rpm_resume). Igual con cargador o batería y con perfil performance o balanced. En nv-acpi.c y osapi.c no se encontró parámetro de módulo para evitarlo.
-- Interruptor: /sys/devices/platform/asus-nb-wmi/dgpu_disable (0 = dGPU activa, 1 = apagada). gpu_mux_mode=1 (híbrido); egpu_enable no existe. Con 1 la NVIDIA desaparece de lspci y el valor persistió tras reiniciar (uptime 2 min, verificado).
-- Consumo en batería con la dGPU apagada y en reposo: 9.52 W promedio (30 s, current_now x voltage_now; BAT1 no expone power_now). No hay medición comparativa con la dGPU encendida.
-- Scripts en ~/.local/bin (versionados en el repo desde 2026-10-28): dgpu-off (desde TTY: sv stop sddm, rmmod nvidia_*, dgpu_disable=1, sv start sddm; log en ~/dgpu.log) y dgpu-on (dgpu_disable=0, rescan PCI, modprobe nvidia; ver actualización abajo).
-- El Xorg de SDDM abre la NVIDIA al arrancar (OutputClass de 10-nvidia-drm-outputclass.conf) y bloquea el rmmod; por eso dgpu-off detiene SDDM. zen (RDD Process) también la usa.
-
-Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrarlo en una release anual de Odyssey.
-[Histórico: dgpu-on en caliente ya quedó verificado más abajo; lo vigente está en 'Pendientes actuales'] Pendientes de entonces: probar dgpu-on en caliente; evitar que el Xorg de SDDM tome la NVIDIA (o greeter Wayland) para alternar sin cerrar sesión; medir consumo comparativo; reporte para nobody con los datos de NVPCF; generalizar (hoy solo ASUS vía asus-nb-wmi).
-
-<!-- dgpu-update-2026-10-28 -->
-### dGPU: actualización, flujo completo verificado (2026-10-28 06:14)
-
-- dgpu-on en caliente funciona: la NVIDIA (RTX 4050 Max-Q, 01:00.0 y 01:00.1) vuelve al bus, el driver carga, nvidia-smi -L la ve y su runtime queda en suspended. Offload GL (glxinfo renderer NVIDIA) y Vulkan (lista NVIDIA y Radeon 740M RADV) funcionan.
-- Al reaparecer, la numeración DRM se invierte: la NVIDIA pasa a card1/renderD129 y la iGPU a card0/renderD128. Usar /dev/dri/by-path y no cardN fijos.
-- El apagado en caliente no es posible: elogind-daemon mantiene abiertos los nodos DRM de la NVIDIA y bloquea el rmmod de nvidia_drm (no se sabe por qué los abre). niri no es el cliente.
-- dgpu-off v2: desde niri se relanza como root con setsid, detiene SDDM, descarga nvidia_*, pone dgpu_disable=1 y reinicia SDDM (trap EXIT garantiza el reinicio). Probado: el proceso desacoplado sobrevivió al cierre de sesión; resultado dgpu_disable=1, NVIDIA en PCI 0, sddm reiniciado.
-- Diseño resultante: encender en caliente; apagar requiere cerrar sesión (un solo comando, vuelve al login).
-- Medido: 9.52 W promedio en batería con la dGPU apagada (reposo, 30 s). Sin medición comparativa con la dGPU encendida.
-- [Histórico, ver 'Pendientes actuales'] Pendientes de entonces: medir consumo con la dGPU encendida; generalizar (hoy solo ASUS vía asus-nb-wmi; otros fabricantes usan otros mecanismos); reporte para nobody con los datos de NVPCF y el flujo.
-
-<!-- dgpu-correccion-2026-10-28 -->
-### dGPU: corrección a las conclusiones anteriores (2026-10-28 13:50)
-
-- La conclusión "la dGPU casi nunca suspende; la causa es NVPCF" quedó SIN CONFIRMAR. Estado de arranque (Xorg de SDDM con la NVIDIA abierta): 57 422 ms activa de 60 000. Medición posterior, con la dGPU añadida en caliente y sin clientes (SDDM reiniciado sin NVIDIA): 0 ms activa de 30 000, runtime suspended, 7.54 W en batería.
-- Los 7.54 W (dGPU encendida) y los 9.52 W (apagada) no son comparables: las condiciones de brillo y apps no se controlaron.
-- Hipótesis sin verificar: en el estado de arranque el Xorg de SDDM mantiene abierta la NVIDIA y eso impide el suspend. Falta medir tras reiniciar con dgpu_disable=0.
-- Decisión de Kyu: quedarse en hybrid (dgpu_disable=0) para jugar con la NVIDIA, por encima de la autonomía. Instalados: prime-run, steam, gamemoderun, mangohud, lutris.
-- No proponer el parche DSDT hasta repetir la medición en estado de arranque.
-
-<!-- brillo-reinstalacion-2026-10-28 -->
-## Brillo del panel (2026-10-28, noche)
-- Resuelto con el arranque por defecto, sin acpi_backlight (GRUB_CMDLINE_LINUX_DEFAULT original: quiet resume=UUID=... loglevel=4). Único dispositivo: nvidia_wmi_ec_backlight (type firmware, máx 200), que mueve el panel. Verificado tras reinicio con salida real: cmdline sin acpi_backlight, un solo dispositivo y brightness.toml apuntando a él.
-- Causa desconocida: no se sabe qué cambió entre el arranque donde no respondía y el que sí. Hipótesis sin probar: el EC solo responde bien con la dGPU presente desde el arranque (un solo dato; antes, la escritura al mismo dispositivo con la dGPU añadida en caliente no tuvo efecto visible).
-- acpi_backlight=native: aparecen amdgpu_bl1 y nvidia_0; escribir en amdgpu_bl1 cambia sysfs pero el panel no responde (por DPCD el panel se atenúa por PWM, no por AUX). acpi_backlight=vendor: no aparece ningún dispositivo y noctalia muestra "Disabled". asusd detenido no cambió el resultado. No usar acpi_backlight; los /etc/default/grub.bak.* sobran.
-- ~/.config/noctalia/brightness.toml (backlight_device = "nvidia_wmi_ec_backlight") está en el repo (commit ad3717d). Las teclas de niri (config.kdl, líneas ~400-401) usan brightnessctl --class=backlight sin -d: con un solo dispositivo funcionan, sin cambios. De las teclas Fn Kyu solo dijo "ya cambia el brillo", sin más detalle.
-- Observación sin probar (lectura del script): /etc/sv/odyssey-backlight/run restaura el brillo guardado en el primer dispositivo de /sys/class/backlight/*; con native sería amdgpu_bl1. Va en el post del foro para nobody.
-- Reinicio de confirmación (2026-10-28, noche), con salida real: cmdline sin acpi_backlight (BOOT_IMAGE=/vmlinuz-6.12.113_1, nouveau.config=NvGspRm=1 apparmor=1 security=apparmor quiet resume=UUID=... loglevel=4); un solo dispositivo, nvidia_wmi_ec_backlight type=firmware brightness=200/200; brightness.toml con backlight_device = "nvidia_wmi_ec_backlight"; dgpu_disable=0; nvidia-smi 595.112.07. Kyu respondió "si jaló" sin decir qué probó (slider o teclas Fn): para más rigor, pedirle una observación concreta ("cambió de forma clara" o "no hizo nada").
-- El volcado de la configuración efectiva de noctalia (lo subió Kyu) muestra [brightness.monitor.eDP-1] con backend = "backlight" y backlight_device = "nvidia_wmi_ec_backlight": noctalia usa ese dispositivo. Ese volcado no se versiona.
-
-## Scripts de GPU y reinstalación (2026-10-28, noche)
-- dgpu-on, dgpu-off y gpu-mode (~/.local/bin) están versionados. gpu-mode escribe dgpu_disable y gpu_mux_mode vía asus-nb-wmi (integrated/hybrid/ultimate); el modo ultimate no está probado. dgpu-off cierra la sesión. Modo elegido: híbrido (dgpu_disable=0).
-- README.md (guía de 8 pasos), restore.sh (instala chezmoi, configura git, genera la llave SSH y hace chezmoi apply con backups) y system-restore.sh (agrega kbd-purple a /etc/rc.local con backup y activa power-profiles-daemon; está en .chezmoiignore).
-- Probado: chezmoi apply a una carpeta temporal y comparación con el home: 18 archivos, 0 diferencias. Cubre solo dotfiles.
-- Sin verificar: el nombre exacto del módulo NVIDIA en el Control Center de Odyssey (solo se vio el CLI odyssey-nvidia); que las apps ai.storyteller.* salgan de Flathub; el flujo completo en instalación limpia (SSH, paquetes, system-restore.sh, build de miri y lavat).
-- Odyssey gestiona por su cuenta: odyssey-secure-dns, los odyssey-nvidia-* de /etc/modprobe.d, /etc/odyssey/nvidia-state.json y los paquetes odyssey-*. Para Steam usar odyssey-prime %command% (prime-run viene en el paquete nvidia).
-- Rust viene de rustup (~/.cargo/bin); miri y lavat se compilan desde fuente. Flatpaks: Sober, mcpelauncher, ytmdesktop, Bazaar, Scribe, ai.storyteller.{artcraft-launcher,deckcraft,wordcraft}.
-- odyssey-backlight y odyssey-gaming-profile aparecen down con normally up: es normal (restauran estado al arrancar y se apagan solos).
-- xbps-pkgdb -a reporta hash mismatch en KDE, base-files, runit-void, kitty y odyssey-*. Hipótesis sin comparar con una salida anterior: personalizaciones de Odyssey. Ninguno es de un paquete quitado.
-- No subir /etc/NetworkManager/system-connections/ (contraseñas Wi-Fi en texto plano).
-- Pendientes: probar la reinstalación en una VM o con un usuario nuevo; arreglo del Xorg de SDDM (enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o greeter Wayland; AutoAddGPU=false no bastó); limpiar los .bak (brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia no están en .chezmoiignore).
-
-<!-- registro-sesion-2026-10-28 -->
-## Post del foro para nobody: borrador (2026-10-28, noche)
-- Tipo: hallazgo (observación), no bug de Odyssey. Origen probable: firmware, kernel o driver NVIDIA. Va en inglés, en la voz de Kyu: prosa con encabezados en negrita, sin viñetas, humor autocrítico y firma "- Q (Kyu)". Si el agente tiene la skill odyssey-forum-voice, leerla y pasar humanizer; no corregir la gramática no-nativa de Kyu.
-- Falta: la categoría del foro (Kyu no la ha dicho) y que Kyu confirme lo marcado abajo. No incluir cifras de vatios (9.52 W y 7.54 W no son comparables y pertenecen al reporte aparte del Xorg de SDDM).
-- Por confirmar antes de publicar: el modelo FA607NUG (sin verificar con salida); la frase sobre amdgpu.backlight=1 viene de un borrador anterior y el handoff no dice que se probara; "It survived a reboot" descansa en un solo reinicio y en el "si jaló" de Kyu; gpu_mux_mode=1 como híbrido viene de la sección dGPU (verificado en esa sesión).
-- Errores ya corregidos en el borrador, no repetir: las líneas de dmesg (amdgpu omite su registro; nvidia-modeset dice que ACPI no reportó backlight nativo) son del arranque con acpi_backlight=vendor, no del arranque por defecto; no se afirma que las teclas Fn funcionen (Kyu solo dijo "ya cambia el brillo"); no se afirma que el EC dependa de la dGPU al arrancar (es hipótesis con un solo dato).
-- Texto para publicar (la cita es solo formato de este archivo):
-
-> **Panel brightness on the TUF A16 only moves through nvidia_wmi_ec_backlight**
->
-> Hello Argonauts, sharing something I spent most of a day on, in case it helps anyone with a hybrid laptop. @nobody maybe it's useful for the next release too.
->
-> **What happened**
-> For a while the brightness of the internal panel didn't change at all, not with the slider in noctalia and not with the keys. The sysfs values moved, the screen stayed the same. Now it works, but I honestly don't know what fixed it, so I'm posting this as an observation and not as a solved bug.
->
-> **My setup**
-> ASUS TUF Gaming A16 FA607NUG with a Radeon 740M and an RTX 4050 Max-Q, Odyssey shipwreck, kernel 6.12.113_1, NVIDIA 595.112.07, niri 26.04 and noctalia. Hybrid mode (dgpu_disable=0, gpu_mux_mode=1). The panel is a CSOT MNG007QX2-1, 1920x1200 at 144 Hz (eDP-1).
->
-> **What I tried**
-> On the default boot there's only one device in /sys/class/backlight, nvidia_wmi_ec_backlight (type firmware, max 200), and it moves the panel. The slider and the OSD in noctalia work with brightness.toml pointing to it.
->
-> With acpi_backlight=native two devices show up, amdgpu_bl1 and nvidia_0. Writing to amdgpu_bl1 changes the sysfs values but the panel doesn't react. I also read the panel's DPCD: it dims through PWM, not through AUX, so the amdgpu.backlight=1 idea was a dead end. I even stopped asusd to be sure it wasn't in the way (I had asusctl installed back then, LOL) and nothing changed.
->
-> With acpi_backlight=vendor there's no backlight device at all and noctalia shows "Disabled". In dmesg amdgpu skips its own backlight registration, and nvidia-modeset says ACPI didn't report a native backlight.
->
-> Earlier that day I had also written to nvidia_wmi_ec_backlight after turning the dGPU off and back on at runtime. The write was accepted and nothing happened on screen.
->
-> **What I think it is**
-> My guess, not proven: the EC only drives the panel properly when the NVIDIA GPU is there from boot, not when I bring it back later. That's one data point, so don't quote me. I can't tell what changed between the dead boot and the working one. Not sure if it's the firmware, the kernel or the NVIDIA driver, but I don't think it's Odyssey.
->
-> One more thing for @nobody: /etc/sv/odyssey-backlight/run restores the saved brightness into the first device it finds in /sys/class/backlight. On the default boot there's only one so it's fine, but with acpi_backlight=native the first would be amdgpu_bl1, the one that doesn't move the panel. This is only from reading the script, I haven't tested it.
->
-> It survived a reboot, and I want to check it again with the dGPU off. The best is yet to come.
-> - Q (Kyu)
-
-<!-- flatpak-nvidia-2026-10-28 -->
-## Flatpak y la NVIDIA (2026-10-28, noche)
-- La extensión org.freedesktop.Platform.GL.nvidia-595-112-07 (rama 1.4) ya está instalada en el sistema y coincide con el driver del host: el problema no era el driver. En híbrido, Flatpak arranca en la iGPU; hay que pasarle las tres variables de odyssey-prime (__NV_PRIME_RENDER_OFFLOAD=1, __GLX_VENDOR_LIBRARY_NAME=nvidia, __VK_LAYER_NV_optimus=NVIDIA_only). No hay switcheroo-control.
-- Sober: con Wayland nativo falla (eglCreateWindowSurface); por XWayland renderiza en la NVIDIA (nvtop: GPU1 25-45 %, picos ~80 %; Kyu: "se ve bien" tras un rato de juego). Override de sistema: sockets=!wayland;x11 y las tres variables. Vive en /var/lib/flatpak/overrides/, fuera de chezmoi; system-restore.sh lo reaplica (sin probar en instalación limpia). Revertir: sudo flatpak override --system --reset org.vinegarhq.Sober. Hipótesis sin probar: el modeset=0 de odyssey-nvidia-modeset.conf causa el fallo en Wayland.
-- mcpelauncher (1.26.52.3): con la NVIDIA por X11 se trabó dos veces (caché fría y caliente): NVIDIA al 0 %, cliente con CPU alta, sin XID en dmesg. Con la Radeon (sin override) entró a un mundo y aguantó 10 min. Kyu dice que en CachyOS pasa igual (dato suyo, no verificado aquí). Decisión: sin override, usa la Radeon. No se probó modeset=1. No va al foro: evidencia débil y sin relación con Odyssey.
-- Pendiente solo si Kyu lo decide: probar modeset=1 (reinicio y archivo de Odyssey); sería material para nobody.
-
-<!-- panel-nvidia-2026-10-28 -->
-## Panel Run on NVIDIA y apps (2026-10-28, noche)
-- Objetivo de Kyu: la herramienta que diseña apunta a apps que NO son Flatpak. Idea abierta: el arreglo de Sober (sin socket de Wayland, con X11) podría servir para otros Flatpak.
-- El panel (/usr/share/odyssey-controlcenter/panel_nvidia.py, sección "Run on NVIDIA") es una caja de comando: _prime_launch hace shlex.split del texto y Popen(['odyssey-prime', *args], start_new_session=True). No lista apps ni toca lanzadores (el grep no halló .desktop ni flatpak). odyssey-prime solo exporta __NV_PRIME_RENDER_OFFLOAD=1, __GLX_VENDOR_LIBRARY_NAME=nvidia y __VK_LAYER_NV_optimus=NVIDIA_only. El perfil guardado dice "render offload only" y coincide con modeset=0 en odyssey-nvidia-modeset.conf; la casilla "Enable NVIDIA display outputs" equivale a odyssey-nvidia --displays-on (modeset on).
-- El .desktop de un Flatpak es un flatpak run pelado: el icono del menú no pasa por odyssey-prime. Las tres variables sí cruzan al sandbox (Bazaar, sin override: ninguna sin odyssey-prime, las tres con odyssey-prime flatpak run).
-- Nativas, verificado: glxinfo con odyssey-prime da NVIDIA y sin él Radeon; glxgears por odyssey-prime aparece en nvidia-smi. supertuxkart (instalado con xbps para la prueba) lanzado desde el panel: su padre es ether_control_center.py, tiene las tres variables, DEV 1 con 571 MiB y GPU1 de 25 a 80 %. SIN DETERMINAR si usa Wayland o X11 (tiene DISPLAY y WAYLAND_DISPLAY, y librerías de ambos).
-- Wayland con la NVIDIA, reproducible: odyssey-prime vkcube --wsi wayland --gpu_number 0 selecciona la RTX 4050 y sale con exit 1 ("Could not find both graphics and present queues"). Con --wsi xcb corre y aparece en nvidia-smi (C+G). Con la Radeon (gpu 1) funcionan ambos. Sober muestra el mismo patrón (fallo en eglCreateWindowSurface con Wayland nativo). Que la causa sea modeset=0 es hipótesis: modeset=1 no se ha probado.
-- Bazaar desde el panel: sin flags, el proceso existe pero no hay ventana; con flatpak run --nosocket=wayland --socket=x11 la ventana abre, con las tres variables y sin WAYLAND_DISPLAY. No aparece en nvidia-smi (carga muy baja); no se sabe qué GPU usa.
-- mcpelauncher: solo se probó la NVIDIA con X11 (se trabó con caché fría y caliente, NVIDIA al 0 %). Wayland nativo con variables PRIME y el launcher NO está probado de forma limpia: la prueba del panel salió contaminada porque el launcher se relanza solo al elegir versión y Kyu lo abrió desde el lanzador de noctalia (el cliente no tenía variables PRIME). Sin override de sistema, usa la Radeon. Kyu dice que en CachyOS pasa igual (no verificado).
-- Opinión mía, sin probar: un override global de Flatpak (sin nombre de app) es mala idea; mejor por app o con los flags escritos en el panel.
-- No se publica el post del foro todavía.
+## Documentos por tema (detalle; leer solo si el tema aplica)
+- docs/dgpu.md: dGPU (dgpu_disable, scripts dgpu-on, dgpu-off y gpu-mode, mediciones). Tiene capas fechadas: la corrección de las 13:50 manda sobre las conclusiones anteriores.
+- docs/brillo.md: brillo del panel, resuelto con nvidia_wmi_ec_backlight y el arranque por defecto.
+- docs/flatpak-nvidia.md: Sober, mcpelauncher y el panel Run on NVIDIA.
+- docs/foro-post-brillo.md: borrador del post para nobody, sin publicar.
