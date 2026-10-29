@@ -164,3 +164,10 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - docs/foro-post-brillo.md
+
+## 2026-10-28 21:09 — docs/dgpu.md consolidado; reinstalación separada en docs/reinstalacion.md
+- Por qué: dgpu.md tenía tres capas fechadas que se contradecían y una sección de reinstalación mezclada; ahora hay un estado vigente con verificado y sin confirmar por separado
+- Archivos:
+  - AGENTS.md
+  - docs/dgpu.md
+  - docs/reinstalacion.md

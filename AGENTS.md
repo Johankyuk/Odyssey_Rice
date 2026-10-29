@@ -88,7 +88,8 @@ Ver CHANGELOG.md (más reciente al final).
 - lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.
 
 ## Documentos por tema (detalle; leer solo si el tema aplica)
-- docs/dgpu.md: dGPU (dgpu_disable, scripts dgpu-on, dgpu-off y gpu-mode, mediciones). Tiene capas fechadas: la corrección de las 13:50 manda sobre las conclusiones anteriores.
+- docs/dgpu.md: dGPU (dgpu_disable, scripts dgpu-on, dgpu-off y gpu-mode, mediciones). Estado vigente, con lo verificado y lo sin confirmar por separado.
+- docs/reinstalacion.md: README, restore.sh, system-restore.sh, Flatpaks, paquetes Odyssey y lo sin verificar de una instalación limpia.
 - docs/brillo.md: brillo del panel, resuelto con nvidia_wmi_ec_backlight y el arranque por defecto.
 - docs/flatpak-nvidia.md: Sober, mcpelauncher y el panel Run on NVIDIA.
 - docs/foro-post-brillo.md: borrador del post para nobody, sin publicar.
