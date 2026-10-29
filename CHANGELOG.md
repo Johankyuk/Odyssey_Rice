@@ -135,3 +135,10 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: El borrador del post vivía solo en la conversación; también faltaban la verificación tras el reinicio, el objetivo de fondo de Kyu y la nota de que el modelo FA607NUG no está verificado
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 19:57 — Flatpak y NVIDIA: Sober con override, mcpelauncher en la Radeon
+- Por qué: Sober renderiza en la NVIDIA por X11 con override de sistema (system-restore.sh lo reaplica); mcpelauncher se traba con la NVIDIA y se deja en la Radeon; modeset=0 de Odyssey queda como hipótesis sin probar
+- Archivos:
+  - AGENTS.md
+  - README.md
+  - system-restore.sh

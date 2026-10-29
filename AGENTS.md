@@ -4,6 +4,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 
 <!-- pendientes-actuales-2026-10-28 -->
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
+- Flatpak y NVIDIA (2026-10-28): Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon (ver la sección 'Flatpak y la NVIDIA'). Falta comprobar en la VM que system-restore.sh aplique el override de Sober.
 - Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en la sección "Post del foro para nobody: borrador". El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
 - Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores).
@@ -181,3 +182,10 @@ Objetivo de Kyu: un modo GPU on/off general, para pasárselo a nobody e integrar
 >
 > It survived a reboot, and I want to check it again with the dGPU off. The best is yet to come.
 > - Q (Kyu)
+
+<!-- flatpak-nvidia-2026-10-28 -->
+## Flatpak y la NVIDIA (2026-10-28, noche)
+- La extensión org.freedesktop.Platform.GL.nvidia-595-112-07 (rama 1.4) ya está instalada en el sistema y coincide con el driver del host: el problema no era el driver. En híbrido, Flatpak arranca en la iGPU; hay que pasarle las tres variables de odyssey-prime (__NV_PRIME_RENDER_OFFLOAD=1, __GLX_VENDOR_LIBRARY_NAME=nvidia, __VK_LAYER_NV_optimus=NVIDIA_only). No hay switcheroo-control.
+- Sober: con Wayland nativo falla (eglCreateWindowSurface); por XWayland renderiza en la NVIDIA (nvtop: GPU1 25-45 %, picos ~80 %; Kyu: "se ve bien" tras un rato de juego). Override de sistema: sockets=!wayland;x11 y las tres variables. Vive en /var/lib/flatpak/overrides/, fuera de chezmoi; system-restore.sh lo reaplica (sin probar en instalación limpia). Revertir: sudo flatpak override --system --reset org.vinegarhq.Sober. Hipótesis sin probar: el modeset=0 de odyssey-nvidia-modeset.conf causa el fallo en Wayland.
+- mcpelauncher (1.26.52.3): con la NVIDIA por X11 se trabó dos veces (caché fría y caliente): NVIDIA al 0 %, cliente con CPU alta, sin XID en dmesg. Con la Radeon (sin override) entró a un mundo y aguantó 10 min. Kyu dice que en CachyOS pasa igual (dato suyo, no verificado aquí). Decisión: sin override, usa la Radeon. No se probó modeset=1. No va al foro: evidencia débil y sin relación con Odyssey.
+- Pendiente solo si Kyu lo decide: probar modeset=1 (reinicio y archivo de Odyssey); sería material para nobody.
