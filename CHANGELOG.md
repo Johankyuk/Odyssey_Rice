@@ -176,3 +176,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Por qué: Orden de secciones: reglas y pendientes arriba, historial al final; las dos viñetas de la paleta pasan a Tema de noctalia; el bullet del foro apuntaba a una sección que ya no existe
 - Archivos:
   - AGENTS.md
+
+## 2026-10-28 21:14 — asusctl y teclado RGB movidos a docs/asus.md
+- Por qué: Es lo más grande que quedaba en AGENTS.md y asusctl está descartado; el RGB sigue vigente pero no depende de asusd; AGENTS.md conserva datos del equipo, la regla de ppt_*/nv_* y punteros
+- Archivos:
+  - AGENTS.md
+  - docs/asus.md

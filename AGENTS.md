@@ -9,7 +9,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
 - Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores). Confirmar también que restore.sh deje la paleta morada (theme.toml.tmpl y el wallpaper).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
-- Kernel 7 y asus-armoury: cambio de GPU mux; ahí se retoma ~/src/asusctl. Hasta entonces el kernel no cambia.
+- Kernel 7 y asus-armoury: cambio de GPU mux; ahí se retoma ~/src/asusctl (pasos en docs/asus.md). Hasta entonces el kernel no cambia.
 - Backlog: windowrules; plugins de noctalia; IDE de Python (Miniconda + Spyder, el entorno spyder abre bien; detalle en "Pendientes"); plantillas de chezmoi Shipwreck vs Odyssey estable; bug de miri con la 3.ª ventana (upstream, parche abandonado).
 
 ## Entorno
@@ -64,14 +64,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). Modelo verificado con salida real (2026-10-28, /sys/class/dmi/id/product_name): ASUS TUF Gaming A16 FA607NUG_FA607NUG.
 - No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver docs/dgpu.md).
 
-### asusctl y rog-control-center: DESCARTADO (2026-10-28)
-- asusctl y rog-control-center 6.5.0 se compilaron en ~/src/asusctl (tag 6.5.0, origin https://github.com/opengamingcollective/asusctl) y se ELIMINARON del sistema el 2026-10-28: binarios, regla udev 99-asusd.rules, .desktop, dbus asusd.conf, icono, metainfo, locales, /etc/sv/asusd con sus enlaces, /etc/asusd y /usr/share/{asusd,rog-gui,asusctl}. También se quitaron las dependencias de build (51 paquetes, 416 MB; pkg-config se quedó). Respaldo de /etc/asusd en ~/asusd-etc.bak.*.tar.gz; la fuente se conserva en ~/src/asusctl.
-- Motivo del descarte: con kernel 6.12 solo funcionaban perfiles de plataforma, límite de carga, monitoreo y brillo del teclado. La pestaña GPU y los límites de potencia piden el driver asus-armoury (kernel 6.19 o 7, según la fuente) y asusctl aura daba os error 13 en kbd_rgb_mode.
-- Para retomarlo con kernel 7: cd ~/src/asusctl, git fetch --tags, git checkout <tag>, reinstalar las dependencias de build (ya no están), make, sudo make install, borrar las unidades systemd instaladas y recrear /etc/sv/asusd/run (IS_SERVICE=1, exec /usr/bin/asusd) con su enlace en /var/service.
-
-### Teclado RGB (vigente, no depende de asusd)
-- Teclado RGB: se controla escribiendo "1 0 R G B 0" en /sys/class/leds/asus::kbd_backlight/kbd_rgb_mode (archivo de solo escritura). Color elegido: 120 20 220, persistido en el bloque kbd-purple de /etc/rc.local (fuera de chezmoi). Los pasteles (ej. 9c75d7) se ven blancos en el teclado; usar colores saturados. No probado tras suspender.
-- Siguen en el sistema, inocuos sin asusd: /etc/udev/rules.d/99-asus-kbd-rgb.rules (hace legibles kbd_rgb_mode y kbd_rgb_state) y el bloque kbd-purple de /etc/rc.local, que escribe directo al LED.
+- asusctl (DESCARTADO) y teclado RGB (vigente, no depende de asusd): ver docs/asus.md.
 
 ## Tema de noctalia y lavat
 <!-- zz-kyu-ui-2026-10-28 -->
@@ -87,6 +80,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 ## Documentos por tema (detalle; leer solo si el tema aplica)
 - docs/dgpu.md: dGPU (dgpu_disable, scripts dgpu-on, dgpu-off y gpu-mode, mediciones). Estado vigente, con lo verificado y lo sin confirmar por separado.
 - docs/reinstalacion.md: README, restore.sh, system-restore.sh, Flatpaks, paquetes Odyssey y lo sin verificar de una instalación limpia.
+- docs/asus.md: asusctl y rog-control-center (descartados, con los pasos para retomarlos con kernel 7) y teclado RGB (vigente).
 - docs/brillo.md: brillo del panel, resuelto con nvidia_wmi_ec_backlight y el arranque por defecto.
 - docs/flatpak-nvidia.md: Sober, mcpelauncher y el panel Run on NVIDIA.
 - docs/foro-post-brillo.md: borrador del post para nobody, sin publicar.
