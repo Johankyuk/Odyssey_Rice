@@ -4,15 +4,13 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 
 <!-- pendientes-actuales-2026-10-28 -->
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
-- Panel NVIDIA y Flatpak (2026-10-28 noche): sin publicar nada hasta agotar las pruebas (decisión de Kyu). Faltan: modeset=1 con odyssey-nvidia --displays-on (reinicio e initramfs; no hacerlo sin avisar), si supertuxkart corre en Wayland o X11 (xlsclients no está instalado) y qué GPU usa Bazaar. Detalle en docs/flatpak-nvidia.md.
-- Flatpak y NVIDIA (2026-10-28): Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon (ver docs/flatpak-nvidia.md). Falta comprobar en la VM que system-restore.sh aplique el override de Sober.
+- Panel NVIDIA y Flatpak (2026-10-28 noche): sin publicar nada hasta agotar las pruebas (decisión de Kyu). Estado: Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon. Faltan: modeset=1 con odyssey-nvidia --displays-on (reinicio e initramfs; no hacerlo sin avisar), si supertuxkart corre en Wayland o X11 (xlsclients no está instalado), qué GPU usa Bazaar y comprobar en la VM que system-restore.sh aplique el override de Sober. Detalle en docs/flatpak-nvidia.md.
 - Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en docs/foro-post-brillo.md. El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
-- Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores).
+- Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores). Confirmar también que restore.sh deje la paleta morada (theme.toml.tmpl y el wallpaper).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
-- Toml de noctalia (resuelto 2026-10-28): lo que Kyu cambió vive en ~/.local/state/noctalia/settings.toml (estado de la GUI, fuera del repo por diseño). Se versionó una instantánea como dot_config/noctalia/zz-kyu-ui.toml (ver la sección "Tema de noctalia y lavat"). Antes de ese cambio chezmoi status estaba limpio y brightness.toml ya estaba subido (commit ad3717d).
 - Kernel 7 y asus-armoury: cambio de GPU mux; ahí se retoma ~/src/asusctl. Hasta entonces el kernel no cambia.
-- Backlog previo: windowrules; toml de colores de noctalia (discrepancia roja/morada); plugins de noctalia; IDE de Python (Miniconda + Spyder, el entorno spyder abre bien); plantillas de chezmoi Shipwreck vs Odyssey estable; bug de miri con la 3.ª ventana (upstream, parche abandonado).
+- Backlog: windowrules; plugins de noctalia; IDE de Python (Miniconda + Spyder, el entorno spyder abre bien; detalle en "Pendientes"); plantillas de chezmoi Shipwreck vs Odyssey estable; bug de miri con la 3.ª ventana (upstream, parche abandonado).
 
 ## Entorno
 - Distro: Odyssey Shipwreck, copia personal de "nobody" que llega cada ~40 días para cazar bugs y probar betas; su config puede divergir de Odyssey estable.
@@ -40,7 +38,7 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - Cambios como bloques copy-paste ejecutables, idempotentes, con backup previo (cp "$F" "$F.bak.$(date +%s)") y verificación que aborte con mensaje claro si algo no coincide; terminan con `echo "✓ terminado"`.
 - Diagnóstico antes de parchar: no asumir rutas ni contenido; pedir un comando de una sola línea y esperar la salida.
 - No afirmar que algo funciona sin salida real que lo confirme.
-- Decisiones: tomar la más limpia y declararla en una línea; preguntar solo en trade-offs reales; lo crítico va al final, marcado "**Crítico:**" o "**Decisión tuya:**".
+- Decisiones: tomar la más limpia y declararla en una línea; preguntar solo en trade-offs reales; lo crítico y las instrucciones previas van al INICIO del mensaje (marcado "**Crítico:**"), antes de correr cualquier script; las decisiones que Kyu debe tomar van en negrita ("**Decisión tuya:**") solo al final.
 - Cada cambio al repo se registra con el alias de zsh `rice "resumen" "por qué / contexto"` (= `./rice-commit.sh ...`): hace `chezmoi re-add`, añade la entrada a CHANGELOG.md, hace el commit y el push. Un archivo nuevo necesita `chezmoi add` antes de que `rice` lo detecte. Ojo: rice-commit.sh ejecuta chezmoi re-add y git add -A, o sea sube TODO lo pendiente; revisar git status antes. El alias rice no se expande en subshell: usar ~/.local/share/chezmoi/rice-commit.sh.
 - Al cerrar un tema, actualizar "Pendientes actuales" (al inicio de este archivo) y "Estado actual".
 <!-- agentes-reglas-2026-10-28 -->
@@ -54,25 +52,21 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - cava y cmatrix instalados con xbps. lavat no está en xbps; instalado manualmente desde https://github.com/AngelJumbo/lavat (clonado en ~/src/lavat, `make install PREFIX=$HOME/.local`) en ~/.local/bin, sin sudo.
 - keybinds: Mod+T se queda para `toggle-window-floating`, se eliminó el duplicado Mod+V. `miri-toggle` (script en ~/.local/bin) quedó sin conectar a ningún bind — Mod+M ya alterna master/scroll vía `miri action cycle-focused-workspace-mode` y aplica `focus-column-first` en cada toggle, no solo al entrar a master.
 - noctalia (paleta, resuelto 2026-10-28): el morado sale del wallpaper (~/Pictures/Wallpapers/wallhaven-2eqjdy.png), no de Odyssey.json. Lo decide ~/.local/state/noctalia/settings.toml (fuera del repo): `[theme] source = "wallpaper"`, `wallpaper_scheme = "soft"`, plantillas builtin foot, kcolorscheme, niri y qt, y community zen-browser y thunar. Shipwreck trae por defecto `source = "custom"` con la paleta Odyssey (rojo y negro) en ~/.config/noctalia/odyssey.toml.
+- fuente (2026-10-28): OpenDyslexicMono:size=11 en foot.ini y font_family = "OpenDyslexic" en ~/.config/noctalia/odyssey.toml, ya subido al repo.
 
 ## Discrepancias conocidas
 - Paleta de noctalia (resuelta 2026-10-28): colorschemes/Odyssey/Odyssey.json y settings.json de ~/.config/noctalia son formato v4 heredado, y palettes/Odyssey.json es la paleta `custom` de Shipwreck (rojo #e8192c); ninguno decide los colores actuales. Noctalia v5 fusiona los .toml de ~/.config/noctalia/ y luego carga ~/.local/state/noctalia/settings.toml, que gana si repite un ajuste. Las plantillas activas (foot, niri, qt, kcolorscheme) reescriben foot/themes/noctalia y niri/noctalia.kdl cuando cambia la paleta o se ejecuta `noctalia msg templates-apply`. No cambiar `source` ni aplicar plantillas sin asumir que esos dos archivos del repo se regeneran.
 - Bug abierto de miri: en modo master, al abrir la 3ra ventana la vista se corre; focus-column-first manual lo corrige. Se probó un parche en src/layout/master.rs (hilo con sleep de 250ms + FocusColumnFirst/FocusWindow) pero no resolvió el bug y es frágil (condición de carrera); se abandonó, no se guardó como .diff.
 
 ## Pendientes
-- La lista vigente es "Pendientes actuales", al inicio de este archivo. Aquí queda solo el detalle del backlog antiguo.
-- Windowrules; plugins necesarios de noctalia.
-- Paleta de noctalia (respaldo resuelto): el repo ya versiona dot_config/noctalia/theme.toml.tmpl (source = "wallpaper", wallpaper_scheme = "soft") y el wallpaper wallhaven-2eqjdy.png. No se versiona ~/.local/state/noctalia/settings.toml (overrides de la app). Falta confirmar que restore.sh deje la paleta morada en una instalación limpia (parte del pendiente de reinstalación).
-- Fuente para dislexia (resuelto 2026-10-28): OpenDyslexicMono:size=11 en foot.ini y font_family = "OpenDyslexic" en ~/.config/noctalia/odyssey.toml, ya subido al repo.
+- La lista vigente es "Pendientes actuales", al inicio de este archivo. Aquí queda solo el detalle del IDE de Python.
 - IDE de Python: Miniconda en ~/.local/share/miniconda3 y entorno conda "spyder" (Python 3.12, conda-forge, --override-channels para evitar los ToS de los canales de Anaconda); abre bien, con warnings de Qt wayland y amdgpu que no bloquean. Decisión: Miniconda + Spyder, sin Jupyter y sin conda init en .zshrc (activación manual por sesión). Kyu no ha cerrado formalmente este tema.
-- ROG Control Center (dGPU bajo demanda): DESCARTADO el 2026-10-28 junto con asusctl (ver la sección de asusctl). Se retoma con kernel 7 y asus-armoury.
-- Plantillas chezmoi para diferencias entre Shipwreck y Odyssey estable; probar restore.sh y el README en otra máquina o en una VM (ver Pendientes actuales).
 
 ## Historial
 Ver CHANGELOG.md (más reciente al final).
 
 ## Equipo ASUS TUF A16 (sesión 2026-10-28)
-- Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). El modelo exacto FA607NUG viene de la skill del foro y de la memoria; no se verificó con salida real (comando: cat /sys/class/dmi/id/product_name).
+- Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). Modelo verificado con salida real (2026-10-28, /sys/class/dmi/id/product_name): ASUS TUF Gaming A16 FA607NUG_FA607NUG.
 - No escribir a mano ppt_* ni nv_* en /sys/devices/platform/asus-nb-wmi/: los ppt_* leen 5 y no se sabe qué acepta el firmware. dgpu_disable y gpu_mux_mode los escriben los scripts dgpu-on, dgpu-off y gpu-mode (ver docs/dgpu.md).
 
 ### asusctl y rog-control-center: DESCARTADO (2026-10-28)

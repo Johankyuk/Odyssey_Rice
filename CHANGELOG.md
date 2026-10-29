@@ -158,3 +158,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - docs/dgpu.md
   - docs/flatpak-nvidia.md
   - docs/foro-post-brillo.md
+
+## 2026-10-28 21:07 — AGENTS.md: regla de orden, pendientes fusionados y modelo verificado
+- Por qué: Regla de Kyu (crítico al inicio), sin pendientes resueltos duplicados, FA607NUG verificado por DMI y panel CSOT marcado sin respaldo en el borrador del foro
+- Archivos:
+  - AGENTS.md
+  - docs/foro-post-brillo.md
