@@ -171,3 +171,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
   - AGENTS.md
   - docs/dgpu.md
   - docs/reinstalacion.md
+
+## 2026-10-28 21:12 — AGENTS.md: Historial al final, paleta de noctalia reunida y bullet del foro corregido
+- Por qué: Orden de secciones: reglas y pendientes arriba, historial al final; las dos viñetas de la paleta pasan a Tema de noctalia; el bullet del foro apuntaba a una sección que ya no existe
+- Archivos:
+  - AGENTS.md

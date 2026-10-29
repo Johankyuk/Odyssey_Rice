@@ -5,7 +5,7 @@ Repo privado de dotfiles de Kyu (Johan Kyu Kim Espinosa), gestionado con chezmoi
 <!-- pendientes-actuales-2026-10-28 -->
 ## Pendientes actuales (2026-10-28 noche; manda sobre las listas de pendientes más abajo)
 - Panel NVIDIA y Flatpak (2026-10-28 noche): sin publicar nada hasta agotar las pruebas (decisión de Kyu). Estado: Sober corre en la NVIDIA con override; mcpelauncher se quedó en la Radeon. Faltan: modeset=1 con odyssey-nvidia --displays-on (reinicio e initramfs; no hacerlo sin avisar), si supertuxkart corre en Wayland o X11 (xlsclients no está instalado), qué GPU usa Bazaar y comprobar en la VM que system-restore.sh aplique el override de Sober. Detalle en docs/flatpak-nvidia.md.
-- Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en docs/foro-post-brillo.md. El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en esa sección y publique.
+- Foro (nobody): el post del hallazgo del brillo está completo, en borrador, en docs/foro-post-brillo.md. El brillo persistió tras un reinicio (Kyu dijo "si jaló"). Falta que Kyu elija la categoría del foro, confirme los datos marcados en ese archivo (incluido el panel CSOT, sin respaldo: verificar el EDID) y publique.
 - dGPU en reposo: sospecha sin probar de que el Xorg de SDDM mantiene abierta la NVIDIA (29 131 ms activa de 30 000 en una ventana de 30 s). Ideas: enmascarar 10-nvidia-drm-outputclass.conf en /etc/X11/xorg.conf.d/ o usar un greeter Wayland; AutoAddGPU=false ya se probó y no bastó. No afecta a los juegos. Diagnosticar antes de parchar y reportar aparte; los 9.52 W (apagada) y 7.54 W (encendida) no son comparables.
 - Reinstalación: probar el flujo completo (restore.sh, README, system-restore.sh) en una VM de Odyssey o con un usuario nuevo. Es lo menos verificado del repo. Verificar también el orden de carga de zz-kyu-ui.toml frente a odyssey.toml (29 claves se repiten y no se compararon sus valores). Confirmar también que restore.sh deje la paleta morada (theme.toml.tmpl y el wallpaper).
 - Limpieza sin decidir (no borrar sin que Kyu lo diga): brightness.toml.bak.* y odyssey.toml.bak.* en ~/.config/noctalia (no están en .chezmoiignore), /etc/default/grub.bak.*, ~/asusd-etc.bak.*.tar.gz, varios .bak.* en ~/.local/bin y /etc/udev/rules.d/99-asus-kbd-rgb.rules.
@@ -51,19 +51,14 @@ Secretos o tokens (revisar con grep antes de cada `add`), vesktop, zen, VSCodium
 - miri: solo config.toml versionado; el binario instalado es stock, compilado desde ~/src/miri sin parches (el parche probado para el bug de la 3ra ventana se descartó, ver Discrepancias conocidas).
 - cava y cmatrix instalados con xbps. lavat no está en xbps; instalado manualmente desde https://github.com/AngelJumbo/lavat (clonado en ~/src/lavat, `make install PREFIX=$HOME/.local`) en ~/.local/bin, sin sudo.
 - keybinds: Mod+T se queda para `toggle-window-floating`, se eliminó el duplicado Mod+V. `miri-toggle` (script en ~/.local/bin) quedó sin conectar a ningún bind — Mod+M ya alterna master/scroll vía `miri action cycle-focused-workspace-mode` y aplica `focus-column-first` en cada toggle, no solo al entrar a master.
-- noctalia (paleta, resuelto 2026-10-28): el morado sale del wallpaper (~/Pictures/Wallpapers/wallhaven-2eqjdy.png), no de Odyssey.json. Lo decide ~/.local/state/noctalia/settings.toml (fuera del repo): `[theme] source = "wallpaper"`, `wallpaper_scheme = "soft"`, plantillas builtin foot, kcolorscheme, niri y qt, y community zen-browser y thunar. Shipwreck trae por defecto `source = "custom"` con la paleta Odyssey (rojo y negro) en ~/.config/noctalia/odyssey.toml.
 - fuente (2026-10-28): OpenDyslexicMono:size=11 en foot.ini y font_family = "OpenDyslexic" en ~/.config/noctalia/odyssey.toml, ya subido al repo.
 
 ## Discrepancias conocidas
-- Paleta de noctalia (resuelta 2026-10-28): colorschemes/Odyssey/Odyssey.json y settings.json de ~/.config/noctalia son formato v4 heredado, y palettes/Odyssey.json es la paleta `custom` de Shipwreck (rojo #e8192c); ninguno decide los colores actuales. Noctalia v5 fusiona los .toml de ~/.config/noctalia/ y luego carga ~/.local/state/noctalia/settings.toml, que gana si repite un ajuste. Las plantillas activas (foot, niri, qt, kcolorscheme) reescriben foot/themes/noctalia y niri/noctalia.kdl cuando cambia la paleta o se ejecuta `noctalia msg templates-apply`. No cambiar `source` ni aplicar plantillas sin asumir que esos dos archivos del repo se regeneran.
 - Bug abierto de miri: en modo master, al abrir la 3ra ventana la vista se corre; focus-column-first manual lo corrige. Se probó un parche en src/layout/master.rs (hilo con sleep de 250ms + FocusColumnFirst/FocusWindow) pero no resolvió el bug y es frágil (condición de carrera); se abandonó, no se guardó como .diff.
 
 ## Pendientes
 - La lista vigente es "Pendientes actuales", al inicio de este archivo. Aquí queda solo el detalle del IDE de Python.
 - IDE de Python: Miniconda en ~/.local/share/miniconda3 y entorno conda "spyder" (Python 3.12, conda-forge, --override-channels para evitar los ToS de los canales de Anaconda); abre bien, con warnings de Qt wayland y amdgpu que no bloquean. Decisión: Miniconda + Spyder, sin Jupyter y sin conda init en .zshrc (activación manual por sesión). Kyu no ha cerrado formalmente este tema.
-
-## Historial
-Ver CHANGELOG.md (más reciente al final).
 
 ## Equipo ASUS TUF A16 (sesión 2026-10-28)
 - Equipo: ASUS TUF Gaming A16 FA607NUG (Ryzen 7 7445HS, RTX 4050). Odyssey Shipwreck: base Void, runit, xbps. Kernel 6.12.113_1 (linux-ether). No cambiar el kernel ni proponerlo por ahora (kernel 7 es un pendiente de Kyu para más adelante, ver Pendientes actuales). Modelo verificado con salida real (2026-10-28, /sys/class/dmi/id/product_name): ASUS TUF Gaming A16 FA607NUG_FA607NUG.
@@ -86,6 +81,8 @@ Ver CHANGELOG.md (más reciente al final).
 - Para refrescar la instantánea: copiar settings.toml sin config_version, [theme] ni [wallpaper], conservar las 3 líneas de comentario del encabezado, validar con tomllib que el resultado sea igual al original recortado y subir con rice-commit.sh. No subir la configuración efectiva completa (883 líneas de valores por defecto que cambian con cada versión de noctalia).
 - Tema noctalia: dot_config/noctalia/theme.toml.tmpl con source = "wallpaper" y wallpaper_scheme = "soft"; wallpaper wallhaven-2eqjdy.png versionado en Pictures/Wallpapers del repo.
 - lavat: binario en ~/.local/bin/lavat (no está en xbps ni en chezmoi); Kyu lo usa directo, sin alias.
+- noctalia (paleta, resuelto 2026-10-28): el morado sale del wallpaper (~/Pictures/Wallpapers/wallhaven-2eqjdy.png), no de Odyssey.json. Lo decide ~/.local/state/noctalia/settings.toml (fuera del repo): `[theme] source = "wallpaper"`, `wallpaper_scheme = "soft"`, plantillas builtin foot, kcolorscheme, niri y qt, y community zen-browser y thunar. Shipwreck trae por defecto `source = "custom"` con la paleta Odyssey (rojo y negro) en ~/.config/noctalia/odyssey.toml.
+- Paleta de noctalia (resuelta 2026-10-28): colorschemes/Odyssey/Odyssey.json y settings.json de ~/.config/noctalia son formato v4 heredado, y palettes/Odyssey.json es la paleta `custom` de Shipwreck (rojo #e8192c); ninguno decide los colores actuales. Noctalia v5 fusiona los .toml de ~/.config/noctalia/ y luego carga ~/.local/state/noctalia/settings.toml, que gana si repite un ajuste. Las plantillas activas (foot, niri, qt, kcolorscheme) reescriben foot/themes/noctalia y niri/noctalia.kdl cuando cambia la paleta o se ejecuta `noctalia msg templates-apply`. No cambiar `source` ni aplicar plantillas sin asumir que esos dos archivos del repo se regeneran.
 
 ## Documentos por tema (detalle; leer solo si el tema aplica)
 - docs/dgpu.md: dGPU (dgpu_disable, scripts dgpu-on, dgpu-off y gpu-mode, mediciones). Estado vigente, con lo verificado y lo sin confirmar por separado.
@@ -93,3 +90,6 @@ Ver CHANGELOG.md (más reciente al final).
 - docs/brillo.md: brillo del panel, resuelto con nvidia_wmi_ec_backlight y el arranque por defecto.
 - docs/flatpak-nvidia.md: Sober, mcpelauncher y el panel Run on NVIDIA.
 - docs/foro-post-brillo.md: borrador del post para nobody, sin publicar.
+
+## Historial
+Ver CHANGELOG.md (más reciente al final).
