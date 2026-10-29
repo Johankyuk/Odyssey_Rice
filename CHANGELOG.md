@@ -182,3 +182,9 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - docs/asus.md
+
+## 2026-10-28 21:17 — Panel CSOT verificado con niri msg outputs
+- Por qué: El borrador del foro marcaba el panel MNG007QX2-1 a 1920x1200 y 144 Hz como sin respaldo; niri lo confirma (144.002 Hz en eDP-1)
+- Archivos:
+  - AGENTS.md
+  - docs/foro-post-brillo.md
