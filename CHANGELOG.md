@@ -188,3 +188,8 @@ Cada entrada: fecha, resumen, por qué y archivos. Lo escribe rice-commit.sh.
 - Archivos:
   - AGENTS.md
   - docs/foro-post-brillo.md
+
+## 2026-11-02 00:17 — niri: cursor 40
+- Por qué: tamaño de cursor en uso en esta máquina, no estaba respaldado
+- Archivos:
+  - dot_config/niri/config.kdl

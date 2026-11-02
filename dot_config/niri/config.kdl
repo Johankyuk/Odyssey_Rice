@@ -7,7 +7,7 @@
 // esce enorme. xcursor-size 24 e' lo stesso valore di dconf e dei settings.ini.
 cursor {
     xcursor-theme "Adwaita"
-    xcursor-size 24
+    xcursor-size 40
 }
 
 // Input device configuration.
